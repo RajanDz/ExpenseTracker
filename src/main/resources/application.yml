@@ -1,0 +1,22 @@
+
+server:
+  port: ${PORT:8080}
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  datasource:
+    name: MySQL Connection
+    url: jdbc:mysql://localhost:3306/worldFriend
+    username: root
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+app:
+  jwtSecret: ${JWT_SECRET}
+  jwtExpirationMs: ${JWT_EXPIRATION_MS}
+  authCookieName: jwtToken
+
+
