@@ -1,7 +1,12 @@
 package com.expenseTracker.expensetracker;
 
+import com.expenseTracker.expensetracker.dto.BudgetExpenseDto;
+import com.expenseTracker.expensetracker.model.BudgetList;
+import com.expenseTracker.expensetracker.model.Expense;
 import com.expenseTracker.expensetracker.model.Role;
 import com.expenseTracker.expensetracker.model.User;
+import com.expenseTracker.expensetracker.repository.BudgetListRepository;
+import com.expenseTracker.expensetracker.repository.ExpensiveRepository;
 import com.expenseTracker.expensetracker.repository.RoleRepository;
 import com.expenseTracker.expensetracker.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -12,10 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @SpringBootTest(classes = ExpensetrackerApplication.class)
 class ExpensetrackerApplicationTests {
@@ -30,6 +34,13 @@ class ExpensetrackerApplicationTests {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private BudgetListRepository budgetListRepository;
+
+	@Autowired
+	private ExpensiveRepository expensiveRepository;
+
 
 	@Test
 	void contextLoads() {
@@ -59,5 +70,30 @@ class ExpensetrackerApplicationTests {
 		roles.add(role);
 		userRepository.save(user);
 		logger.info("User assigned role: {}", user);
+	}
+
+
+
+
+	@Test
+	void createBudget(){
+		BudgetList budgetList = new BudgetList("Mart Plata", LocalDate.now(),LocalDate.now().plusDays(30));
+		budgetListRepository.save(budgetList);
+	}
+
+	@Test
+	void addExpenseToList(){
+		BudgetList budgetList = budgetListRepository.findBudgetById(2L);
+		Expense expense = new Expense("Popravka sijelica na lijevi far + dijagnostika", 13,LocalDateTime.now(),"OBAVEZNO", budgetList);
+		budgetList.getExpenses().add(expense);
+		budgetListRepository.save(budgetList);
+		logger.info("Expense added: {}", budgetList);
+	}
+
+	@Test
+	void selectExpensiveFromList(){
+		BudgetList  budgetList = budgetListRepository.findBudgetById(2L);
+		List<String> expensiveNames = budgetList.getExpenses().stream().map(Expense::getName).toList();
+		logger.info("Budget list: {}", new BudgetExpenseDto(budgetList.getName(),expensiveNames));
 	}
 }
