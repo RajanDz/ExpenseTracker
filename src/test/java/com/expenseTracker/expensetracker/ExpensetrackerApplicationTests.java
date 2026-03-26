@@ -77,22 +77,33 @@ class ExpensetrackerApplicationTests {
 
 	@Test
 	void createBudget(){
-		BudgetList budgetList = new BudgetList("Mart Plata", LocalDate.now(),LocalDate.now().plusDays(30));
+		BudgetList budgetList = BudgetList.builder()
+				.name("Potpuna stednja")
+				.startDate(LocalDate.now())
+				.endDate(LocalDate.now()
+				.plusDays(15))
+				.build();
 		budgetListRepository.save(budgetList);
+		logger.info("Budget: {}", budgetList);
 	}
 
 	@Test
 	void addExpenseToList(){
-		BudgetList budgetList = budgetListRepository.findBudgetById(2L);
-		Expense expense = new Expense("Popravka sijelica na lijevi far + dijagnostika", 13,LocalDateTime.now(),"OBAVEZNO", budgetList);
-		budgetList.getExpenses().add(expense);
+		BudgetList budgetList = budgetListRepository.findBudgetById(4L);
+		Expense expense = Expense.builder()
+				.name("Pranje auta")
+				.amount(5)
+				.dateTime(LocalDateTime.now())
+				.category("OPCIONALNO")
+				.build();
+		budgetList.addExpensive(expense);
 		budgetListRepository.save(budgetList);
 		logger.info("Expense added: {}", budgetList);
 	}
 
 	@Test
-	void selectExpensiveFromList(){
-		BudgetList  budgetList = budgetListRepository.findBudgetById(2L);
+	void selectExpenseFromList(){
+		BudgetList  budgetList = budgetListRepository.findBudgetById(4L);
 		List<String> expensiveNames = budgetList.getExpenses().stream().map(Expense::getName).toList();
 		logger.info("Budget list: {}", new BudgetExpenseDto(budgetList.getName(),expensiveNames));
 	}

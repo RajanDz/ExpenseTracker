@@ -9,8 +9,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "expense")
 @Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
-
+@Builder
 public class Expense {
 
     @Id
@@ -18,28 +19,27 @@ public class Expense {
     private Long id;
 
     @Column(name = "name")
-    private  String name;
+    @NonNull
+    private String name;
 
     @Column(name = "amount")
-    private  double amount;
+    @NonNull
+    private double amount;
 
     @Column(name = "date_time")
-    private   LocalDateTime dateTime;
+    @NonNull
+    private LocalDateTime dateTime;
 
     @Column(name = "category")
-    private   String category;
+    @NonNull
+    private String category;
 
     @ManyToOne
     @JoinColumn(name = "budget_list")
-    private   BudgetList budgetList;
+    @Setter
+    private BudgetList budgetList;
 
-    public Expense(String name, double amount, LocalDateTime dateTime, String category, BudgetList budgetList) {
-        this.name = name;
-        this.amount = amount;
-        this.dateTime = dateTime;
-        this.category = category;
-        this.budgetList = budgetList;
-    }
+
 
     @Override
     public String toString() {
