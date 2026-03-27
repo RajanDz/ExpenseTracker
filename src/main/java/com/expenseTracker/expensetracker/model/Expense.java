@@ -40,15 +40,4 @@ public class Expense {
     private BudgetList budgetList;
 
 
-
-    @Override
-    public String toString() {
-        return "Expense{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", amount=" + amount +
-                ", dateTime=" + dateTime +
-                ", category='" + category + '\'' +
-                '}';
-    }
 }

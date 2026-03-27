@@ -1,6 +1,7 @@
 package com.expenseTracker.expensetracker.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +12,6 @@ import java.util.List;
 @Entity
 @Table(name = "budget_list")
 @Getter
-@ToString(exclude = "expenses")
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
@@ -34,6 +34,12 @@ public class BudgetList {
     @OneToMany(mappedBy = "budgetList", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Expense> expenses = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @Setter
+    @JsonIgnore
+    private User user;
 
     public void addExpensive(Expense expense){
         this.expenses.add(expense);

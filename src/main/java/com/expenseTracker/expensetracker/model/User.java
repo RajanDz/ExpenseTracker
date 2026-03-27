@@ -4,7 +4,9 @@ package com.expenseTracker.expensetracker.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -12,7 +14,6 @@ import java.util.Set;
 @Getter
 @RequiredArgsConstructor
 @NoArgsConstructor
-@ToString
 public class User {
 
     @Id
@@ -40,9 +41,17 @@ public class User {
     private String password;
 
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    List<BudgetList> budgetLists = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_role",
     joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
+
+    public void createBudget(BudgetList budgetList){
+        this.budgetLists.add(budgetList);
+        budgetList.setUser(this);
+    }
 }

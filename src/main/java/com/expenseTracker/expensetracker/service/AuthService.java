@@ -2,6 +2,8 @@ package com.expenseTracker.expensetracker.service;
 
 
 import com.expenseTracker.expensetracker.dto.SignInRequest;
+import com.expenseTracker.expensetracker.model.CustomUserDetails;
+import com.expenseTracker.expensetracker.model.User;
 import com.expenseTracker.expensetracker.repository.UserRepository;
 import com.expenseTracker.expensetracker.security.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
@@ -33,5 +35,6 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return jwtUtils.generateToken(user);
     }
+
 
 }

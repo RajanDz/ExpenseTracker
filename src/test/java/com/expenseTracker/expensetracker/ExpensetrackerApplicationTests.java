@@ -91,10 +91,10 @@ class ExpensetrackerApplicationTests {
 	void addExpenseToList(){
 		BudgetList budgetList = budgetListRepository.findBudgetById(4L);
 		Expense expense = Expense.builder()
-				.name("Pranje auta")
-				.amount(5)
+				.name("Patike")
+				.amount(45)
 				.dateTime(LocalDateTime.now())
-				.category("OPCIONALNO")
+				.category("OBAVEZNO")
 				.build();
 		budgetList.addExpensive(expense);
 		budgetListRepository.save(budgetList);
