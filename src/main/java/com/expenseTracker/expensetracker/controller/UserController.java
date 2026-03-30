@@ -2,6 +2,8 @@ package com.expenseTracker.expensetracker.controller;
 
 
 import com.expenseTracker.expensetracker.dto.CreateBudgetList;
+import com.expenseTracker.expensetracker.dto.CreateExpenseDto;
+import com.expenseTracker.expensetracker.dto.UpdateExpenseAmountDto;
 import com.expenseTracker.expensetracker.model.BudgetList;
 import com.expenseTracker.expensetracker.model.User;
 import com.expenseTracker.expensetracker.service.UserService;
@@ -32,6 +34,18 @@ public class UserController {
         User user = userService.getLoggedUser(authentication);
         CreateBudgetList createBudget = userService.createBudgetList(budgetList,user);
         return ResponseEntity.ok(createBudget);
+    }
+
+    @PostMapping("/createAndAddExpense")
+    public ResponseEntity<CreateBudgetList> createAndAddExpense(@Valid @RequestBody CreateExpenseDto createExpenseDto){
+        BudgetList budgetList = userService.addExpenseToBudgetList(createExpenseDto);
+        return ResponseEntity.ok(new CreateBudgetList(budgetList.getName(),budgetList.getRemaining_budget(),budgetList.getStartDate(),budgetList.getEndDate()));
+    }
+
+    @PutMapping("/updateAmount")
+    public ResponseEntity<CreateBudgetList> updateAmount(@Valid @RequestBody UpdateExpenseAmountDto updateExpenseAmountDto){
+        BudgetList budgetList = userService.updateExpenseAmountAndBudget(updateExpenseAmountDto);
+        return  ResponseEntity.ok(new CreateBudgetList(budgetList.getName(),budgetList.getRemaining_budget(),budgetList.getStartDate(),budgetList.getEndDate()));
     }
 
     @GetMapping("/remainingDays/{budgetId}")

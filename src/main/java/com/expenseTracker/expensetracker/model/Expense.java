@@ -2,6 +2,7 @@ package com.expenseTracker.expensetracker.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,19 +20,22 @@ public class Expense {
     private Long id;
 
     @Column(name = "name")
-    @NonNull
+    @NotNull
+    @Setter
     private String name;
 
     @Column(name = "amount")
-    @NonNull
+    @NotNull
+    @Setter
     private double amount;
 
-    @Column(name = "date_time")
-    @NonNull
+    @Column(name = "date_time", updatable = false)
+    @NotNull
     private LocalDateTime dateTime;
 
     @Column(name = "category")
-    @NonNull
+    @NotNull
+    @Setter
     private String category;
 
     @ManyToOne
@@ -39,5 +43,11 @@ public class Expense {
     @Setter
     private BudgetList budgetList;
 
+    public void editName(String name){
+        this.name = name;
+    }
+    public void editCategory(String category){
+        this.category = category;
+    }
 
 }

@@ -2,6 +2,7 @@ package com.expenseTracker.expensetracker.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +26,14 @@ public class BudgetList {
     @Column(name = "name")
     private  String name;
 
+    @Column(name = "budget")
+    private Double budget;
+
+    @Column(name = "remaining_budget")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Setter
+    private Double remaining_budget;
+
     @Column(name = "start_date")
     private  LocalDate startDate;
 
@@ -41,10 +50,15 @@ public class BudgetList {
     @JsonIgnore
     private User user;
 
-    public void addExpensive(Expense expense){
+    public void addExpense(Expense expense){
         this.expenses.add(expense);
         expense.setBudgetList(this);
+        this.remaining_budget -= expense.getAmount();
     }
 
-
+    public void updateExpenseAmount(Expense expense, double newAmount){
+        double delta = newAmount - expense.getAmount();
+        this.remaining_budget -= delta;
+        expense.setAmount(newAmount);
+    }
 }

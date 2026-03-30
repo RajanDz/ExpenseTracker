@@ -4,6 +4,8 @@ import com.expenseTracker.expensetracker.model.BudgetList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 public interface BudgetListRepository extends JpaRepository<BudgetList,Long> {
 
     @Query("""
@@ -11,5 +13,5 @@ public interface BudgetListRepository extends JpaRepository<BudgetList,Long> {
                 left join fetch b.expenses
                         where b.id = :id
         """)
-    BudgetList findBudgetById(Long id);
+    Optional<BudgetList> findBudgetById(Long id);
 }

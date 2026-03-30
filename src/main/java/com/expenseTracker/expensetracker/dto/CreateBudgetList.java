@@ -14,6 +14,8 @@ public class CreateBudgetList {
     @NotNull
     private String name;
     @NotNull
+    private Double budget;
+    @NotNull
     private LocalDate startDate;
     @NotNull
     private LocalDate endDate;

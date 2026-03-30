@@ -6,7 +6,7 @@ import com.expenseTracker.expensetracker.model.Expense;
 import com.expenseTracker.expensetracker.model.Role;
 import com.expenseTracker.expensetracker.model.User;
 import com.expenseTracker.expensetracker.repository.BudgetListRepository;
-import com.expenseTracker.expensetracker.repository.ExpensiveRepository;
+import com.expenseTracker.expensetracker.repository.ExpenseRepository;
 import com.expenseTracker.expensetracker.repository.RoleRepository;
 import com.expenseTracker.expensetracker.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -39,7 +39,7 @@ class ExpensetrackerApplicationTests {
 	private BudgetListRepository budgetListRepository;
 
 	@Autowired
-	private ExpensiveRepository expensiveRepository;
+	private ExpenseRepository expensiveRepository;
 
 
 	@Test
@@ -89,21 +89,21 @@ class ExpensetrackerApplicationTests {
 
 	@Test
 	void addExpenseToList(){
-		BudgetList budgetList = budgetListRepository.findBudgetById(4L);
+		BudgetList budgetList = budgetListRepository.findBudgetById(4L).orElseThrow();
 		Expense expense = Expense.builder()
 				.name("Patike")
 				.amount(45)
 				.dateTime(LocalDateTime.now())
 				.category("OBAVEZNO")
 				.build();
-		budgetList.addExpensive(expense);
+		budgetList.addExpense(expense);
 		budgetListRepository.save(budgetList);
 		logger.info("Expense added: {}", budgetList);
 	}
 
 	@Test
 	void selectExpenseFromList(){
-		BudgetList  budgetList = budgetListRepository.findBudgetById(4L);
+		BudgetList  budgetList = budgetListRepository.findBudgetById(4L).orElseThrow();
 		List<String> expensiveNames = budgetList.getExpenses().stream().map(Expense::getName).toList();
 		logger.info("Budget list: {}", new BudgetExpenseDto(budgetList.getName(),expensiveNames));
 	}
