@@ -14,4 +14,5 @@ public interface BudgetListRepository extends JpaRepository<BudgetList,Long> {
                         where b.id = :id
         """)
     Optional<BudgetList> findBudgetById(Long id);
+    Optional<BudgetList> findByIdAndUserId(Long id,Long userId);
 }

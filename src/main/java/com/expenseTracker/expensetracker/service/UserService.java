@@ -1,10 +1,7 @@
 package com.expenseTracker.expensetracker.service;
 
 
-import com.expenseTracker.expensetracker.dto.Category;
-import com.expenseTracker.expensetracker.dto.CreateBudgetList;
-import com.expenseTracker.expensetracker.dto.CreateExpenseDto;
-import com.expenseTracker.expensetracker.dto.UpdateExpenseAmountDto;
+import com.expenseTracker.expensetracker.dto.*;
 import com.expenseTracker.expensetracker.model.BudgetList;
 import com.expenseTracker.expensetracker.model.CustomUserDetails;
 import com.expenseTracker.expensetracker.model.Expense;
@@ -56,8 +53,11 @@ public class UserService {
     }
 
     @Transactional
-    public BudgetList addExpenseToBudgetList(CreateExpenseDto createExpense){
-        BudgetList budgetList = budgetListRepository.findBudgetById(createExpense.getBudgetId()).orElseThrow();
+    public BudgetList addExpenseToBudgetList(CreateExpenseDto createExpense, User user){
+//        BudgetList budgetList = budgetListRepository.findBudgetById(createExpense.getBudgetId()).orElseThrow();
+        BudgetList budgetList = budgetListRepository.findByIdAndUserId(createExpense.getBudgetId(), user.getId()).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + user.getId())
+        );
         Expense expense = Expense.builder().name(createExpense
                 .getName())
                 .amount(createExpense.getAmount())
@@ -75,9 +75,26 @@ public class UserService {
     }
 
     @Transactional
+    public Expense updateExpenseFields(UpdateExpenseFields expenseFields){
+        if (expenseFields.getName() == null && expenseFields.getCategory() == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No fields to update");
+        }
+        Expense expense = expenseRepository.findByIdAndBudgetListId(expenseFields.getExpenseId(), expenseFields.getBudgetId()).orElseThrow();
+
+        if (expenseFields.getName() != null){
+            expense.setName(expenseFields.getName());
+        }
+        if (expenseFields.getCategory() != null){
+            expense.setCategory(String.valueOf(Category.valueOf(expenseFields.getCategory())));
+        }
+        expenseRepository.save(expense);
+        return expense;
+    }
+
+    @Transactional
     public BudgetList updateExpenseAmountAndBudget(UpdateExpenseAmountDto updateAmount){
+        Expense expense = expenseRepository.findById(updateAmount.getExpenseId()).orElseThrow();
         BudgetList budget = budgetListRepository.findBudgetById(updateAmount.getBudgetId()).orElseThrow();
-        Expense expense = expenseRepository.findByIdAndBudgetListId(updateAmount.getExpenseId(),budget.getId()).orElseThrow();
         budget.updateExpenseAmount(expense,updateAmount.getNewAmount());
         budgetListRepository.save(budget);
         return  budget;

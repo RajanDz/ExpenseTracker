@@ -31,7 +31,7 @@ public class BudgetList {
 
     @Column(name = "remaining_budget")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @Setter
+    @Setter(AccessLevel.PRIVATE)
     private Double remaining_budget;
 
     @Column(name = "start_date")
@@ -57,8 +57,17 @@ public class BudgetList {
     }
 
     public void updateExpenseAmount(Expense expense, double newAmount){
-        double delta = newAmount - expense.getAmount();
-        this.remaining_budget -= delta;
+        double delta = 0;
+        if (newAmount > expense.getAmount()){
+            delta = newAmount - expense.getAmount();
+            this.remaining_budget -= delta;
+        } else if (newAmount < expense.getAmount()){
+                delta = expense.getAmount() - newAmount;
+                this.remaining_budget += delta;
+        }
         expense.setAmount(newAmount);
+//        double delta = newAmount - expense.getAmount();
+//        this.remaining_budget -= delta;
+//        expense.setAmount(newAmount);
     }
 }
