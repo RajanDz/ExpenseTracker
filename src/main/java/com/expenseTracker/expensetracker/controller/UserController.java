@@ -43,8 +43,9 @@ public class UserController {
     }
 
     @PatchMapping("/updateExpenseFields")
-    public ResponseEntity<ReturnExpenseDto> updateExpenseFields(@Valid @RequestBody UpdateExpenseFields updateExpenseFields){
-        Expense updateExpense = userService.updateExpenseFields(updateExpenseFields);
+    public ResponseEntity<ReturnExpenseDto> updateExpenseFields(@Valid @RequestBody UpdateExpenseFields updateExpenseFields, Authentication authentication){
+        User user = userService.getLoggedUser(authentication);
+        Expense updateExpense = userService.updateExpenseFields(updateExpenseFields, user);
         return ResponseEntity.ok(new ReturnExpenseDto(updateExpense.getName(),updateExpense.getCategory()));
     }
     @PatchMapping("/updateAmount")
