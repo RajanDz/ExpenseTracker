@@ -34,7 +34,12 @@ public class UserController {
         CreateBudgetList createBudget = userService.createBudgetList(budgetList,user);
         return ResponseEntity.ok(createBudget);
     }
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBudget(@PathVariable(name = "id") Long id, Authentication authentication){
+        User user = userService.getLoggedUser(authentication);
+        userService.deleteBudget(id,user);
+        return ResponseEntity.noContent().build();
+    }
     @PostMapping("/createAndAddExpense")
     public ResponseEntity<CreateBudgetList> createAndAddExpense(@Valid @RequestBody CreateExpenseDto createExpenseDto, Authentication authentication){
         User user = userService.getLoggedUser(authentication);

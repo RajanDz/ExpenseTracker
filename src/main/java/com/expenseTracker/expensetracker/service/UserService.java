@@ -53,6 +53,12 @@ public class UserService {
     }
 
     @Transactional
+    public void deleteBudget(Long budgetId, User user){
+        BudgetList budgetList = budgetListRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
+        budgetListRepository.delete(budgetList);
+    }
+
+    @Transactional
     public BudgetList addExpenseToBudgetList(CreateExpenseDto createExpense, User user){
 //        BudgetList budgetList = budgetListRepository.findBudgetById(createExpense.getBudgetId()).orElseThrow();
         BudgetList budgetList = budgetListRepository.findByIdAndUserId(createExpense.getBudgetId(), user.getId()).orElseThrow(
