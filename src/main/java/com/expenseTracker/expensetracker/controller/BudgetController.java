@@ -13,7 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/budgets")
+@RequestMapping("/api/budget")
 @RequiredArgsConstructor
 public class BudgetController {
 
@@ -21,7 +21,7 @@ public class BudgetController {
     private final UserService userService;
 
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<CreateBudgetList> createBudgetList(@Valid @RequestBody CreateBudgetList budgetList, Authentication authentication){
 
         User user = userService.getLoggedUser(authentication);
