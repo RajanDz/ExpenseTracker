@@ -15,4 +15,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
     where u.username = :username
 """)
     Optional<User> findByUsername(String username);
+    Optional<User> findByEmail(String email);
 }
