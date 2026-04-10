@@ -14,7 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/expenses")
+@RequestMapping("/api/expense")
 @RequiredArgsConstructor
 public class ExpenseController {
 
@@ -22,14 +22,14 @@ public class ExpenseController {
     private final UserService userService;
 
 
-    @PostMapping("/createAndAddExpense")
+    @PostMapping
     public ResponseEntity<CreateBudgetList> createAndAddExpense(@Valid @RequestBody CreateExpenseDto createExpenseDto, Authentication authentication){
         User user = userService.getLoggedUser(authentication);
         BudgetList budgetList = expenseService.addExpenseToBudgetList(createExpenseDto,user);
         return ResponseEntity.ok(new CreateBudgetList(budgetList.getName(),budgetList.getRemaining_budget(),budgetList.getStartDate(),budgetList.getEndDate()));
     }
 
-    @PatchMapping("/updateExpenseFields")
+    @PatchMapping
     public ResponseEntity<ReturnExpenseDto> updateExpenseFields(@Valid @RequestBody UpdateExpenseFields updateExpenseFields, Authentication authentication){
         User user = userService.getLoggedUser(authentication);
         Expense updateExpense = expenseService.updateExpenseFields(updateExpenseFields, user);
