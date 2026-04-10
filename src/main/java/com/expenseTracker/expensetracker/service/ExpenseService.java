@@ -3,6 +3,7 @@ package com.expenseTracker.expensetracker.service;
 
 import com.expenseTracker.expensetracker.dto.Category;
 import com.expenseTracker.expensetracker.dto.CreateExpenseDto;
+import com.expenseTracker.expensetracker.dto.UpdateExpenseAmountDto;
 import com.expenseTracker.expensetracker.dto.UpdateExpenseFields;
 import com.expenseTracker.expensetracker.model.BudgetList;
 import com.expenseTracker.expensetracker.model.Expense;
@@ -56,7 +57,7 @@ public class ExpenseService {
 
     @Transactional
     public Expense updateExpenseFields(UpdateExpenseFields expenseFields, User user){
-        if (expenseFields.getName() == null && expenseFields.getCategory() == null){
+        if (expenseFields.getName() == null && expenseFields.getCategory() == null && expenseFields.getAmount() <= 0){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No fields to update");
         }
         BudgetList budget = budgetListRepository.findByIdAndUserId(expenseFields.getBudgetId(),user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with providede userId"));
@@ -66,9 +67,14 @@ public class ExpenseService {
             expense.setName(expenseFields.getName());
         }
         if (expenseFields.getCategory() != null){
-            expense.setCategory(String.valueOf(Category.valueOf(expenseFields.getCategory())));
+            expense.setCategory(String.valueOf(Category.valueOf(expenseFields.getCategory().toUpperCase())));
+        }
+        if (expenseFields.getAmount() > 0){
+            budget.updateExpenseAmount(expense,expenseFields.getAmount());
         }
         expenseRepository.save(expense);
         return expense;
     }
+
+
 }

@@ -27,40 +27,5 @@ public class UserController {
         return authentication.getName();
     }
 
-    @PostMapping("/createBudget")
-    public ResponseEntity<CreateBudgetList> createBudgetList(@Valid @RequestBody CreateBudgetList budgetList, Authentication authentication){
 
-        User user = userService.getLoggedUser(authentication);
-        CreateBudgetList createBudget = userService.createBudgetList(budgetList,user);
-        return ResponseEntity.ok(createBudget);
-    }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBudget(@PathVariable(name = "id") Long id, Authentication authentication){
-        User user = userService.getLoggedUser(authentication);
-        userService.deleteBudget(id,user);
-        return ResponseEntity.noContent().build();
-    }
-    @PostMapping("/createAndAddExpense")
-    public ResponseEntity<CreateBudgetList> createAndAddExpense(@Valid @RequestBody CreateExpenseDto createExpenseDto, Authentication authentication){
-        User user = userService.getLoggedUser(authentication);
-        BudgetList budgetList = userService.addExpenseToBudgetList(createExpenseDto,user);
-        return ResponseEntity.ok(new CreateBudgetList(budgetList.getName(),budgetList.getRemaining_budget(),budgetList.getStartDate(),budgetList.getEndDate()));
-    }
-
-    @PatchMapping("/updateExpenseFields")
-    public ResponseEntity<ReturnExpenseDto> updateExpenseFields(@Valid @RequestBody UpdateExpenseFields updateExpenseFields, Authentication authentication){
-        User user = userService.getLoggedUser(authentication);
-        Expense updateExpense = userService.updateExpenseFields(updateExpenseFields, user);
-        return ResponseEntity.ok(new ReturnExpenseDto(updateExpense.getName(),updateExpense.getCategory()));
-    }
-    @PatchMapping("/updateAmount")
-    public ResponseEntity<CreateBudgetList> updateAmount(@Valid @RequestBody UpdateExpenseAmountDto updateExpenseAmountDto){
-        BudgetList budgetList = userService.updateExpenseAmountAndBudget(updateExpenseAmountDto);
-        return  ResponseEntity.ok(new CreateBudgetList(budgetList.getName(),budgetList.getRemaining_budget(),budgetList.getStartDate(),budgetList.getEndDate()));
-    }
-
-    @GetMapping("/remainingDays/{budgetId}")
-    public Long remainingDaysOfBudget(@PathVariable(name = "budgetId") Long id){
-        return userService.remainingTimeOfBudget(id);
-    }
 }

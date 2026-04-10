@@ -12,4 +12,5 @@ public class UpdateExpenseFields {
     private long expenseId;
     private String name;
     private String category;
+    private double amount;
 }

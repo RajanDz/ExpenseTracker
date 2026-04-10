@@ -31,7 +31,6 @@ public class BudgetList {
 
     @Column(name = "remaining_budget")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @Setter(AccessLevel.PRIVATE)
     private Double remaining_budget;
 
     @Column(name = "start_date")

@@ -11,6 +11,7 @@ import com.expenseTracker.expensetracker.repository.ExpenseRepository;
 import com.expenseTracker.expensetracker.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -32,89 +33,9 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
 
-    @Transactional
-    public CreateBudgetList createBudgetList(CreateBudgetList budgetList, User user){
-
-        if (budgetList.getStartDate().isBefore(LocalDate.now()) || budgetList.getEndDate().isBefore(budgetList.getStartDate())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You need to provide valid date for creating list. Start date need to be after today date and start date need to be before end date.");
-        }
-
-        BudgetList budget = BudgetList.builder()
-                .name(budgetList.getName())
-                .budget(budgetList.getBudget())
-                .remaining_budget(budgetList.getBudget())
-                .startDate(budgetList.getStartDate())
-                .endDate(budgetList.getEndDate())
-                .build();
-
-        user.createBudget(budget);
-        userRepository.save(user);
-        return new CreateBudgetList(budget.getName(),budget.getBudget(),budget.getStartDate(),budget.getEndDate());
-    }
-
-    @Transactional
-    public void deleteBudget(Long budgetId, User user){
-        BudgetList budgetList = budgetListRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
-        budgetListRepository.delete(budgetList);
-    }
-
-    @Transactional
-    public BudgetList addExpenseToBudgetList(CreateExpenseDto createExpense, User user){
-//        BudgetList budgetList = budgetListRepository.findBudgetById(createExpense.getBudgetId()).orElseThrow();
-        BudgetList budgetList = budgetListRepository.findByIdAndUserId(createExpense.getBudgetId(), user.getId()).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with id: " + user.getId())
-        );
-        Expense expense = Expense.builder().name(createExpense
-                .getName())
-                .amount(createExpense.getAmount())
-                .dateTime(LocalDateTime.now())
-                .category(String.valueOf(Category.valueOf(createExpense.getCategory())))
-                .build();
-
-        budgetList.addExpense(expense);
-        if (budgetList.getRemaining_budget() <= 0){
-            logger.warn("Budget overspent for budgetId={}", budgetList.getId());
-        }
-
-        budgetListRepository.save(budgetList);
-        return budgetList;
-    }
-
-
-    @Transactional
-    public Expense updateExpenseFields(UpdateExpenseFields expenseFields, User user){
-        if (expenseFields.getName() == null && expenseFields.getCategory() == null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No fields to update");
-        }
-        BudgetList budget = budgetListRepository.findByIdAndUserId(expenseFields.getBudgetId(),user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with providede userId"));
-        Expense expense = expenseRepository.findByIdAndBudgetListId(expenseFields.getExpenseId(), budget.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found with id: " + expenseFields.getExpenseId()));
-
-        if (expenseFields.getName() != null){
-            expense.setName(expenseFields.getName());
-        }
-        if (expenseFields.getCategory() != null){
-            expense.setCategory(String.valueOf(Category.valueOf(expenseFields.getCategory())));
-        }
-        expenseRepository.save(expense);
-        return expense;
-    }
-
-    @Transactional
-    public BudgetList updateExpenseAmountAndBudget(UpdateExpenseAmountDto updateAmount){
-        Expense expense = expenseRepository.findById(updateAmount.getExpenseId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found with id: " + updateAmount.getExpenseId()));
-        BudgetList budget = budgetListRepository.findBudgetById(updateAmount.getBudgetId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
-        budget.updateExpenseAmount(expense,updateAmount.getNewAmount());
-        budgetListRepository.save(budget);
-        return  budget;
-    }
-
-    public User getLoggedUser(Authentication authentication){
+    public User getLoggedUser(@NonNull Authentication authentication){
         CustomUserDetails authUser = (CustomUserDetails) authentication.getPrincipal();
         return userRepository.findByUsername(authUser.getUsername()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
-    public Long remainingTimeOfBudget(Long budgetId){
-        BudgetList budgetList = budgetListRepository.findById(budgetId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
-        return ChronoUnit.DAYS.between(LocalDate.now(),budgetList.getEndDate());
-    }
 }
