@@ -54,6 +54,12 @@ public class ExpenseService {
         return budgetList;
     }
 
+    @Transactional
+    public void deleteExpense(long budgetId,long expenseId, User user){
+        BudgetList budgetList = budgetListRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
+        Expense expense = expenseRepository.findByIdAndBudgetListId(expenseId,budgetList.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
+        expenseRepository.delete(expense);
+    }
 
     @Transactional
     public Expense updateExpenseFields(UpdateExpenseFields expenseFields, User user){
