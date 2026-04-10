@@ -2,6 +2,7 @@ package com.expenseTracker.expensetracker.controller;
 
 
 import com.expenseTracker.expensetracker.dto.CreateBudgetList;
+import com.expenseTracker.expensetracker.model.BudgetList;
 import com.expenseTracker.expensetracker.model.User;
 import com.expenseTracker.expensetracker.service.BudgetService;
 import com.expenseTracker.expensetracker.service.UserService;
@@ -20,12 +21,19 @@ public class BudgetController {
     private final UserService userService;
 
 
-    @PostMapping("/createBudget")
+    @PostMapping()
     public ResponseEntity<CreateBudgetList> createBudgetList(@Valid @RequestBody CreateBudgetList budgetList, Authentication authentication){
 
         User user = userService.getLoggedUser(authentication);
         CreateBudgetList createBudget = budgetService.createBudgetList(budgetList,user);
         return ResponseEntity.ok(createBudget);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CreateBudgetList> getBudget(@PathVariable(name = "id") long id, Authentication authentication){
+        User user = userService.getLoggedUser(authentication);
+        BudgetList budgetList = budgetService.getBudget(id,user);
+        return ResponseEntity.ok().body(new CreateBudgetList(budgetList.getName(),budgetList.getRemaining_budget(),budgetList.getStartDate(),budgetList.getEndDate()));
     }
 
     @DeleteMapping("/{id}")

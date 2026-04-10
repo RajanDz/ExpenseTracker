@@ -25,6 +25,7 @@ public class BudgetService {
     private final UserRepository userRepository;
     private final BudgetListRepository budgetListRepository;
     private final ExpenseRepository expenseRepository;
+    private final UserService userService;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
 
@@ -46,6 +47,11 @@ public class BudgetService {
         user.createBudget(budget);
         userRepository.save(user);
         return new CreateBudgetList(budget.getName(),budget.getBudget(),budget.getStartDate(),budget.getEndDate());
+    }
+
+    @Transactional
+    public BudgetList getBudget(long id, User user){
+        return budgetListRepository.findByIdAndUserId(id,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with id:"+ id));
     }
 
     @Transactional
