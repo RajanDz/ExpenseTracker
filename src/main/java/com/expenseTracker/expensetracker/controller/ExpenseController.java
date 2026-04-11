@@ -36,10 +36,10 @@ public class ExpenseController {
         return ResponseEntity.ok(new ReturnExpenseDto(updateExpense.getName(),updateExpense.getCategory()));
     }
 
-    @DeleteMapping("/{budgetId}/{expenseId}")
-    public ResponseEntity<Void> deleteExpense(@PathVariable(name = "budgetId") long budgetId, @PathVariable(name = "expenseId") long expenseId,Authentication authentication){
+    @DeleteMapping("/{expenseId}")
+    public ResponseEntity<Void> deleteExpense(@PathVariable(name = "expenseId") long expenseId,Authentication authentication){
         User user = userService.getLoggedUser(authentication);
-        expenseService.deleteExpense(budgetId,expenseId,user);
+        expenseService.deleteExpense(expenseId,user);
         return ResponseEntity.noContent().build();
     }
 }

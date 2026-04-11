@@ -3,6 +3,8 @@ package com.expenseTracker.expensetracker.dto;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
+import java.math.BigDecimal;
+
 @Getter
 public class CreateExpenseDto {
     @NotNull
@@ -10,7 +12,7 @@ public class CreateExpenseDto {
     @NotNull
     private String name;
     @NotNull
-    private Double amount;
+    private BigDecimal amount;
     @NotNull
     private String category;
 }

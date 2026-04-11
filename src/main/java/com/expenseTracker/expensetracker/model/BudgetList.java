@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +28,11 @@ public class BudgetList {
     private  String name;
 
     @Column(name = "budget")
-    private Double budget;
+    private BigDecimal budget;
 
     @Column(name = "remaining_budget")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Double remaining_budget;
+    private BigDecimal remaining_budget;
 
     @Column(name = "start_date")
     private  LocalDate startDate;
@@ -52,21 +53,23 @@ public class BudgetList {
     public void addExpense(Expense expense){
         this.expenses.add(expense);
         expense.setBudgetList(this);
-        this.remaining_budget -= expense.getAmount();
+        this.remaining_budget = this.remaining_budget.subtract(expense.getAmount());
     }
 
-    public void updateExpenseAmount(Expense expense, double newAmount){
-        double delta = 0;
-        if (newAmount > expense.getAmount()){
-            delta = newAmount - expense.getAmount();
-            this.remaining_budget -= delta;
-        } else if (newAmount < expense.getAmount()){
-                delta = expense.getAmount() - newAmount;
-                this.remaining_budget += delta;
+    public void updateExpenseAmount(Expense expense, BigDecimal newAmount){
+        BigDecimal delta;
+        if (newAmount.compareTo(expense.getAmount()) > 0){
+            delta = newAmount.subtract(expense.getAmount());
+            this.remaining_budget = this.remaining_budget.subtract(delta);
+        } else if (newAmount.compareTo(expense.getAmount()) < 0){
+                delta = expense.getAmount().subtract(newAmount);
+                this.remaining_budget = this.remaining_budget.add(delta);
         }
         expense.setAmount(newAmount);
-//        double delta = newAmount - expense.getAmount();
-//        this.remaining_budget -= delta;
-//        expense.setAmount(newAmount);
     }
+
+    public void updateBudgetAfterExpenseDelete(Expense expense){
+        this.remaining_budget = this.remaining_budget.add(expense.getAmount());
+    }
+
 }

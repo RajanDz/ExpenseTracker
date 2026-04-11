@@ -24,8 +24,6 @@ public class BudgetService {
 
     private final UserRepository userRepository;
     private final BudgetListRepository budgetListRepository;
-    private final ExpenseRepository expenseRepository;
-    private final UserService userService;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
 

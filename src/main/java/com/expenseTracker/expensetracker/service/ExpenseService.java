@@ -19,13 +19,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class ExpenseService {
 
-    private final UserRepository userRepository;
     private final BudgetListRepository budgetListRepository;
     private final ExpenseRepository expenseRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
@@ -46,7 +46,7 @@ public class ExpenseService {
                 .build();
 
         budgetList.addExpense(expense);
-        if (budgetList.getRemaining_budget() <= 0){
+        if (budgetList.getRemaining_budget().compareTo(BigDecimal.ZERO) <= 0){
             logger.warn("Budget overspent for budgetId={}", budgetList.getId());
         }
 
@@ -55,15 +55,16 @@ public class ExpenseService {
     }
 
     @Transactional
-    public void deleteExpense(long budgetId,long expenseId, User user){
-        BudgetList budgetList = budgetListRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
-        Expense expense = expenseRepository.findByIdAndBudgetListId(expenseId,budgetList.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
+    public void deleteExpense(long expenseId, User user){
+        Expense expense = expenseRepository.findById(expenseId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
+        BudgetList budgetList = budgetListRepository.findByIdAndUserId(expense.getBudgetList().getId(),user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
+        budgetList.updateBudgetAfterExpenseDelete(expense);
         expenseRepository.delete(expense);
     }
 
     @Transactional
     public Expense updateExpenseFields(UpdateExpenseFields expenseFields, User user){
-        if (expenseFields.getName() == null && expenseFields.getCategory() == null && expenseFields.getAmount() <= 0){
+        if (expenseFields.getName() == null && expenseFields.getCategory() == null && expenseFields.getAmount().compareTo(BigDecimal.ZERO) <= 0){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No fields to update");
         }
         BudgetList budget = budgetListRepository.findByIdAndUserId(expenseFields.getBudgetId(),user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with providede userId"));
@@ -75,7 +76,8 @@ public class ExpenseService {
         if (expenseFields.getCategory() != null){
             expense.setCategory(String.valueOf(Category.valueOf(expenseFields.getCategory().toUpperCase())));
         }
-        if (expenseFields.getAmount() > 0){
+        if (expenseFields.getAmount().compareTo(BigDecimal.ZERO) > 0
+        && expenseFields.getAmount().compareTo(expense.getAmount()) != 0){
             budget.updateExpenseAmount(expense,expenseFields.getAmount());
         }
         expenseRepository.save(expense);

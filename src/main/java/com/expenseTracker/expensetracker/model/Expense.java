@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -27,7 +28,7 @@ public class Expense {
     @Column(name = "amount")
     @NotNull
     @Setter
-    private double amount;
+    private BigDecimal amount;
 
     @Column(name = "date_time", updatable = false)
     @NotNull
