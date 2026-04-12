@@ -1,10 +1,10 @@
 package com.expenseTracker.expensetracker.service;
 
-import com.expenseTracker.expensetracker.dto.CreateBudgetList;
+import com.expenseTracker.expensetracker.dto.BudgetResponseDto;
+import com.expenseTracker.expensetracker.dto.CreateBudgetDto;
 import com.expenseTracker.expensetracker.model.BudgetList;
 import com.expenseTracker.expensetracker.model.User;
 import com.expenseTracker.expensetracker.repository.BudgetListRepository;
-import com.expenseTracker.expensetracker.repository.ExpenseRepository;
 import com.expenseTracker.expensetracker.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class BudgetService {
 
 
     @Transactional
-    public CreateBudgetList createBudgetList(CreateBudgetList budgetList, User user){
+    public BudgetResponseDto createBudgetList(CreateBudgetDto budgetList, User user){
 
         if (budgetList.getStartDate().isBefore(LocalDate.now()) || budgetList.getEndDate().isBefore(budgetList.getStartDate())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You need to provide valid date for creating list. Start date need to be after today date and start date need to be before end date.");
@@ -44,7 +44,7 @@ public class BudgetService {
 
         user.createBudget(budget);
         userRepository.save(user);
-        return new CreateBudgetList(budget.getName(),budget.getBudget(),budget.getStartDate(),budget.getEndDate());
+        return new BudgetResponseDto(budget.getName(),budget.getBudget(),budget.getBudget(),budget.getStartDate(),budget.getEndDate());
     }
 
     @Transactional
@@ -52,6 +52,10 @@ public class BudgetService {
         return budgetListRepository.findByIdAndUserId(id,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with id:"+ id));
     }
 
+    @Transactional
+    public BudgetList getDefaultBudget(User user){
+        return budgetListRepository.findFirstByUserIdAndBudgetIsNotNull(user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
+    }
     @Transactional
     public void deleteBudget(Long budgetId, User user){
         BudgetList budgetList = budgetListRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));

@@ -23,10 +23,10 @@ public class ExpenseController {
 
 
     @PostMapping
-    public ResponseEntity<CreateBudgetList> createAndAddExpense(@Valid @RequestBody CreateExpenseDto createExpenseDto, Authentication authentication){
+    public ResponseEntity<BudgetResponseDto> createAndAddExpense(@Valid @RequestBody CreateExpenseDto createExpenseDto, Authentication authentication){
         User user = userService.getLoggedUser(authentication);
         BudgetList budgetList = expenseService.addExpenseToBudgetList(createExpenseDto,user);
-        return ResponseEntity.ok(new CreateBudgetList(budgetList.getName(),budgetList.getRemaining_budget(),budgetList.getStartDate(),budgetList.getEndDate()));
+        return ResponseEntity.ok(new BudgetResponseDto(budgetList.getName(),budgetList.getRemaining_budget(),budgetList.getBudget(),budgetList.getStartDate(),budgetList.getEndDate()));
     }
 
     @PatchMapping

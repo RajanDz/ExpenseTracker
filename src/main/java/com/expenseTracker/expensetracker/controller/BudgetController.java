@@ -1,7 +1,8 @@
 package com.expenseTracker.expensetracker.controller;
 
 
-import com.expenseTracker.expensetracker.dto.CreateBudgetList;
+import com.expenseTracker.expensetracker.dto.BudgetResponseDto;
+import com.expenseTracker.expensetracker.dto.CreateBudgetDto;
 import com.expenseTracker.expensetracker.model.BudgetList;
 import com.expenseTracker.expensetracker.model.User;
 import com.expenseTracker.expensetracker.service.BudgetService;
@@ -22,20 +23,26 @@ public class BudgetController {
 
 
     @PostMapping
-    public ResponseEntity<CreateBudgetList> createBudgetList(@Valid @RequestBody CreateBudgetList budgetList, Authentication authentication){
+    public ResponseEntity<BudgetResponseDto> createBudgetList(@Valid @RequestBody CreateBudgetDto budgetList, Authentication authentication){
 
         User user = userService.getLoggedUser(authentication);
-        CreateBudgetList createBudget = budgetService.createBudgetList(budgetList,user);
+        BudgetResponseDto createBudget = budgetService.createBudgetList(budgetList,user);
         return ResponseEntity.ok(createBudget);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CreateBudgetList> getBudget(@PathVariable(name = "id") long id, Authentication authentication){
+    public ResponseEntity<BudgetResponseDto> getBudget(@PathVariable(name = "id") long id, Authentication authentication){
         User user = userService.getLoggedUser(authentication);
         BudgetList budgetList = budgetService.getBudget(id,user);
-        return ResponseEntity.ok().body(new CreateBudgetList(budgetList.getName(),budgetList.getRemaining_budget(),budgetList.getStartDate(),budgetList.getEndDate()));
+        return ResponseEntity.ok().body(new BudgetResponseDto(budgetList.getName(),budgetList.getBudget(),budgetList.getRemaining_budget(),budgetList.getStartDate(),budgetList.getEndDate()));
     }
 
+    @GetMapping("/getPrimaryBudget")
+    public ResponseEntity<BudgetResponseDto> getDefaultBudget(Authentication authentication){
+        User user = userService.getLoggedUser(authentication);
+        BudgetList budgetList = budgetService.getDefaultBudget(user);
+        return ResponseEntity.ok().body(new BudgetResponseDto(budgetList.getName(),budgetList.getBudget(),budgetList.getRemaining_budget(),budgetList.getStartDate(),budgetList.getEndDate()));
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBudget(@PathVariable(name = "id") Long id, Authentication authentication){
         User user = userService.getLoggedUser(authentication);
