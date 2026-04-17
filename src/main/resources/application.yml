@@ -9,9 +9,9 @@ spring:
       max-request-size: 10MB
   datasource:
     name: MySQL Connection
-    url: jdbc:mysql://localhost:3306/expensive_tracker
-    username: root
-    password: ${DATABASE_PASSWORD}
+    url: ${MYSQL_URL}
+    username: ${MYSQLUSER}
+    password: ${MYSQLPASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 app:
