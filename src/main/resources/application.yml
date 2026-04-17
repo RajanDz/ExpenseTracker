@@ -13,7 +13,9 @@ spring:
     username: ${MYSQLUSER}
     password: ${MYSQLPASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-
+  jpa:
+    hibernate:
+      ddl-auto: update
 app:
   jwtSecret: ${JWT_SECRET}
   jwtExpirationMs: ${JWT_EXPIRATION_MS}
