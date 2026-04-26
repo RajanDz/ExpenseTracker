@@ -34,14 +34,14 @@ public class BudgetController {
     public ResponseEntity<BudgetResponseDto> getBudget(@PathVariable(name = "id") long id, Authentication authentication){
         User user = userService.getLoggedUser(authentication);
         BudgetList budgetList = budgetService.getBudget(id,user);
-        return ResponseEntity.ok().body(new BudgetResponseDto(budgetList.getName(),budgetList.getBudget(),budgetList.getRemaining_budget(),budgetList.getStartDate(),budgetList.getEndDate()));
+        return ResponseEntity.ok().body(new BudgetResponseDto(budgetList.getName(),budgetList.getBudget(),budgetList.getRemainingBudget(),budgetList.getStartDate(),budgetList.getEndDate()));
     }
 
     @GetMapping("/getPrimaryBudget")
     public ResponseEntity<BudgetResponseDto> getDefaultBudget(Authentication authentication){
         User user = userService.getLoggedUser(authentication);
         BudgetList budgetList = budgetService.getDefaultBudget(user);
-        return ResponseEntity.ok().body(new BudgetResponseDto(budgetList.getName(),budgetList.getBudget(),budgetList.getRemaining_budget(),budgetList.getStartDate(),budgetList.getEndDate()));
+        return ResponseEntity.ok().body(new BudgetResponseDto(budgetList.getName(),budgetList.getBudget(),budgetList.getRemainingBudget(),budgetList.getStartDate(),budgetList.getEndDate()));
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBudget(@PathVariable(name = "id") Long id, Authentication authentication){

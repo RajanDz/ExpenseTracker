@@ -1,6 +1,7 @@
 package com.expenseTracker.expensetracker.model;
 
 
+import com.expenseTracker.expensetracker.common.Validate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -14,11 +15,17 @@ import java.util.List;
 @Entity
 @Table(name = "budget_list")
 @Getter
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BudgetList {
 
+    public BudgetList(String name, BigDecimal budget, LocalDate startDate, LocalDate endDate, User user) {
+        this.name = Validate.text(name, "name");
+        this.budget = Validate.positive(budget,"budget");
+        this.remainingBudget = budget;
+        this.startDate = Validate.notNull(startDate,"start date");
+        this.endDate = Validate.notNull(endDate, "end date");
+        this.user = Validate.notNull(user,"user");
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,8 +38,7 @@ public class BudgetList {
     private BigDecimal budget;
 
     @Column(name = "remaining_budget")
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private BigDecimal remaining_budget;
+    private BigDecimal remainingBudget;
 
     @Column(name = "start_date")
     private  LocalDate startDate;
@@ -41,35 +47,32 @@ public class BudgetList {
     private   LocalDate endDate;
 
     @OneToMany(mappedBy = "budgetList", cascade = CascadeType.ALL)
-    @Builder.Default
     private List<Expense> expenses = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @Setter
-    @JsonIgnore
     private User user;
 
     public void addExpense(Expense expense){
         this.expenses.add(expense);
         expense.setBudgetList(this);
-        this.remaining_budget = this.remaining_budget.subtract(expense.getAmount());
+        this.remainingBudget = this.remainingBudget.subtract(expense.getAmount());
     }
 
     public void updateExpenseAmount(Expense expense, BigDecimal newAmount){
         BigDecimal delta;
         if (newAmount.compareTo(expense.getAmount()) > 0){
             delta = newAmount.subtract(expense.getAmount());
-            this.remaining_budget = this.remaining_budget.subtract(delta);
+            this.remainingBudget = this.remainingBudget.subtract(delta);
         } else if (newAmount.compareTo(expense.getAmount()) < 0){
                 delta = expense.getAmount().subtract(newAmount);
-                this.remaining_budget = this.remaining_budget.add(delta);
+                this.remainingBudget = this.remainingBudget.add(delta);
         }
         expense.setAmount(newAmount);
     }
 
     public void updateBudgetAfterExpenseDelete(Expense expense){
-        this.remaining_budget = this.remaining_budget.add(expense.getAmount());
+        this.remainingBudget = this.remainingBudget.add(expense.getAmount());
     }
 
 }

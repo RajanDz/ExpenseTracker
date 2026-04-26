@@ -50,8 +50,8 @@ public class User {
     inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public void createBudget(BudgetList budgetList){
-        this.budgetLists.add(budgetList);
-        budgetList.setUser(this);
+    public void createBudget(BudgetList budget){
+        this.budgetLists.add(budget);
+        budget.assignUserToBudget(this);
     }
 }

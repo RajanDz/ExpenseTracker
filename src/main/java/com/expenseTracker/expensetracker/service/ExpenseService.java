@@ -3,14 +3,12 @@ package com.expenseTracker.expensetracker.service;
 
 import com.expenseTracker.expensetracker.dto.Category;
 import com.expenseTracker.expensetracker.dto.CreateExpenseDto;
-import com.expenseTracker.expensetracker.dto.UpdateExpenseAmountDto;
 import com.expenseTracker.expensetracker.dto.UpdateExpenseFields;
 import com.expenseTracker.expensetracker.model.BudgetList;
 import com.expenseTracker.expensetracker.model.Expense;
 import com.expenseTracker.expensetracker.model.User;
 import com.expenseTracker.expensetracker.repository.BudgetListRepository;
 import com.expenseTracker.expensetracker.repository.ExpenseRepository;
-import com.expenseTracker.expensetracker.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -46,7 +44,7 @@ public class ExpenseService {
                 .build();
 
         budgetList.addExpense(expense);
-        if (budgetList.getRemaining_budget().compareTo(BigDecimal.ZERO) <= 0){
+        if (budgetList.getRemainingBudget().compareTo(BigDecimal.ZERO) <= 0){
             logger.warn("Budget overspent for budgetId={}", budgetList.getId());
         }
 

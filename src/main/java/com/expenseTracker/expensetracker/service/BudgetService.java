@@ -34,15 +34,8 @@ public class BudgetService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You need to provide valid date for creating list. Start date need to be after today date and start date need to be before end date.");
         }
 
-        BudgetList budget = BudgetList.builder()
-                .name(budgetList.getName())
-                .budget(budgetList.getBudget())
-                .remaining_budget(budgetList.getBudget())
-                .startDate(budgetList.getStartDate())
-                .endDate(budgetList.getEndDate())
-                .build();
+        BudgetList budget = new BudgetList(budgetList.getName(),budgetList.getBudget(),budgetList.getStartDate(),budgetList.getEndDate(),user);
 
-        user.createBudget(budget);
         userRepository.save(user);
         return new BudgetResponseDto(budget.getName(),budget.getBudget(),budget.getBudget(),budget.getStartDate(),budget.getEndDate());
     }
