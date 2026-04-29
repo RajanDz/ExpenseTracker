@@ -52,6 +52,5 @@ public class User {
 
     public void createBudget(BudgetList budget){
         this.budgetLists.add(budget);
-        budget.assignUserToBudget(this);
     }
 }

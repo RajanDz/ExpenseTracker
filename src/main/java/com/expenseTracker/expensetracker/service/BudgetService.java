@@ -1,8 +1,11 @@
 package com.expenseTracker.expensetracker.service;
 
+import com.expenseTracker.expensetracker.dto.BudgetDetailsResponse;
 import com.expenseTracker.expensetracker.dto.BudgetResponseDto;
 import com.expenseTracker.expensetracker.dto.CreateBudgetDto;
+import com.expenseTracker.expensetracker.dto.ReturnExpenseDto;
 import com.expenseTracker.expensetracker.model.BudgetList;
+import com.expenseTracker.expensetracker.model.Expense;
 import com.expenseTracker.expensetracker.model.User;
 import com.expenseTracker.expensetracker.repository.BudgetListRepository;
 import com.expenseTracker.expensetracker.repository.UserRepository;
@@ -16,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +52,12 @@ public class BudgetService {
     @Transactional
     public BudgetList getDefaultBudget(User user){
         return budgetListRepository.findFirstByUserIdAndBudgetIsNotNull(user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
+    }
+    @Transactional
+    public BudgetDetailsResponse budgetExpenses(User user, Long id){
+        BudgetList budget = budgetListRepository.findByIdAndUserId(id,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
+        return new BudgetDetailsResponse(budget.getExpenses().stream().map(expense -> new ReturnExpenseDto(expense.getName(),expense.getCategory())).collect(Collectors.toList()));
+
     }
     @Transactional
     public void deleteBudget(Long budgetId, User user){
