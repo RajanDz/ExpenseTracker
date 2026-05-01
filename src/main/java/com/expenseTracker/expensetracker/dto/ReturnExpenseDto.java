@@ -7,5 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ReturnExpenseDto {
     private String name;
-    private String category;
+    private Category category;
 }

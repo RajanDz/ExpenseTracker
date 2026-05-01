@@ -42,8 +42,8 @@ public class WebConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/budget").hasRole("USER")
-                        .requestMatchers("/api/expense").hasRole("USER")
+                        .requestMatchers("/api/budget").authenticated()
+                        .requestMatchers("/api/expense").authenticated()
                         .anyRequest().authenticated());
         httpSecurity.authenticationProvider(daoAuthenticationProvider());
 

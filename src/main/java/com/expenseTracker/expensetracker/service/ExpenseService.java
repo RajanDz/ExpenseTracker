@@ -40,7 +40,7 @@ public class ExpenseService {
                         .getName())
                 .amount(createExpense.getAmount())
                 .dateTime(LocalDateTime.now())
-                .category(String.valueOf(Category.valueOf(createExpense.getCategory())))
+                .category(createExpense.getCategory())
                 .build();
 
         budgetList.addExpense(expense);
@@ -62,22 +62,20 @@ public class ExpenseService {
 
     @Transactional
     public Expense updateExpenseFields(UpdateExpenseFields expenseFields, User user){
-        if (expenseFields.getName() == null && expenseFields.getCategory() == null && expenseFields.getAmount().compareTo(BigDecimal.ZERO) <= 0){
+        if (expenseFields.getName() == null && expenseFields.getCategory() == null && expenseFields.getAmount() == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No fields to update");
         }
         BudgetList budget = budgetListRepository.findByIdAndUserId(expenseFields.getBudgetId(),user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with providede userId"));
         Expense expense = expenseRepository.findByIdAndBudgetListId(expenseFields.getExpenseId(), budget.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found with id: " + expenseFields.getExpenseId()));
-
-        if (expenseFields.getName() != null){
-            expense.setName(expenseFields.getName());
-        }
-        if (expenseFields.getCategory() != null){
-            expense.setCategory(String.valueOf(Category.valueOf(expenseFields.getCategory().toUpperCase())));
-        }
-        if (expenseFields.getAmount().compareTo(BigDecimal.ZERO) > 0
-        && expenseFields.getAmount().compareTo(expense.getAmount()) != 0){
-            budget.updateExpenseAmount(expense,expenseFields.getAmount());
-        }
+            if (expenseFields.getName() != null){
+                expense.editName(expenseFields.getName());
+            }
+            if (expenseFields.getCategory() != null){
+                expense.editCategory(expenseFields.getCategory());
+            }
+            if (expenseFields.getAmount() != null){
+                budget.updateExpenseAmount(expense,expenseFields.getAmount());
+            }
         expenseRepository.save(expense);
         return expense;
     }

@@ -21,4 +21,6 @@ public class BudgetResponseDto {
     private LocalDate startDate;
     @NotNull
     private LocalDate endDate;
+    @NotNull
+    private String type;
 }

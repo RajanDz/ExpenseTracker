@@ -13,6 +13,6 @@ public class UpdateExpenseFields {
     @NotNull
     private long expenseId;
     private String name;
-    private String category;
+    private Category category;
     private BigDecimal amount;
 }

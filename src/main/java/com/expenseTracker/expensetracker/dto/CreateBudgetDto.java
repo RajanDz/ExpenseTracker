@@ -17,4 +17,6 @@ public class CreateBudgetDto {
     private LocalDate startDate;
     @NotNull
     private LocalDate endDate;
+    @NotNull
+    private String type;
 }

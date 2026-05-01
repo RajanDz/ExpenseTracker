@@ -1,9 +1,6 @@
 package com.expenseTracker.expensetracker.service;
 
-import com.expenseTracker.expensetracker.dto.BudgetDetailsResponse;
-import com.expenseTracker.expensetracker.dto.BudgetResponseDto;
-import com.expenseTracker.expensetracker.dto.CreateBudgetDto;
-import com.expenseTracker.expensetracker.dto.ReturnExpenseDto;
+import com.expenseTracker.expensetracker.dto.*;
 import com.expenseTracker.expensetracker.model.BudgetList;
 import com.expenseTracker.expensetracker.model.Expense;
 import com.expenseTracker.expensetracker.model.User;
@@ -17,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
@@ -38,10 +36,18 @@ public class BudgetService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You need to provide valid date for creating list. Start date need to be after today date and start date need to be before end date.");
         }
 
-        BudgetList budget = new BudgetList(budgetList.getName(),budgetList.getBudget(),budgetList.getStartDate(),budgetList.getEndDate(),user);
+        BudgetList budget = new BudgetList(
+                budgetList.getName(),
+                budgetList.getBudget(),
+                budgetList.getStartDate(),
+                budgetList.getEndDate(),
+                BudgetTypes.valueOf(budgetList.getType()),
+                user
+        );
 
         userRepository.save(user);
-        return new BudgetResponseDto(budget.getName(),budget.getBudget(),budget.getBudget(),budget.getStartDate(),budget.getEndDate());
+        budgetListRepository.save(budget);
+        return new BudgetResponseDto(budget.getName(),budget.getBudget(),budget.getBudget(),budget.getStartDate(),budget.getEndDate(),String.valueOf(budget.getType()));
     }
 
     @Transactional
@@ -69,4 +75,6 @@ public class BudgetService {
         BudgetList budgetList = budgetListRepository.findById(budgetId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
         return ChronoUnit.DAYS.between(LocalDate.now(),budgetList.getEndDate());
     }
+
+
 }

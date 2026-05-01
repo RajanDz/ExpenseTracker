@@ -15,9 +15,9 @@ public class Validate {
         return value;
     }
 
-    public static <T> T notNull(T value, String filed){
+    public static <T> T notNull(T value, String field){
         if (value == null){
-            throw new IllegalArgumentException(filed + " must not be null");
+            throw new IllegalArgumentException(field + " must not be null");
         }
         return value;
     }

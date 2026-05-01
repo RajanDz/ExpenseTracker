@@ -26,7 +26,7 @@ public class ExpenseController {
     public ResponseEntity<BudgetResponseDto> createAndAddExpense(@Valid @RequestBody CreateExpenseDto createExpenseDto, Authentication authentication){
         User user = userService.getLoggedUser(authentication);
         BudgetList budgetList = expenseService.addExpenseToBudgetList(createExpenseDto,user);
-        return ResponseEntity.ok(new BudgetResponseDto(budgetList.getName(),budgetList.getRemainingBudget(),budgetList.getBudget(),budgetList.getStartDate(),budgetList.getEndDate()));
+        return ResponseEntity.ok(new BudgetResponseDto(budgetList.getName(),budgetList.getRemainingBudget(),budgetList.getBudget(),budgetList.getStartDate(),budgetList.getEndDate(),String.valueOf(budgetList.getType())));
     }
 
     @PatchMapping
