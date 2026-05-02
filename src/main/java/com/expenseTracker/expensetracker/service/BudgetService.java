@@ -31,17 +31,12 @@ public class BudgetService {
 
     @Transactional
     public BudgetResponseDto createBudgetList(CreateBudgetDto budgetList, User user){
-
-        if (budgetList.getStartDate().isBefore(LocalDate.now()) || budgetList.getEndDate().isBefore(budgetList.getStartDate())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You need to provide valid date for creating list. Start date need to be after today date and start date need to be before end date.");
-        }
-
         BudgetList budget = new BudgetList(
                 budgetList.getName(),
                 budgetList.getBudget(),
                 budgetList.getStartDate(),
                 budgetList.getEndDate(),
-                BudgetTypes.valueOf(budgetList.getType()),
+                budgetList.getType(),
                 user
         );
 

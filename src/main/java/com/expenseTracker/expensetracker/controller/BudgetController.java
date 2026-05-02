@@ -28,7 +28,7 @@ public class BudgetController {
 
         User user = userService.getLoggedUser(authentication);
         BudgetResponseDto createBudget = budgetService.createBudgetList(budgetList,user);
-        return ResponseEntity.ok(createBudget);
+         return ResponseEntity.ok(createBudget);
     }
 
     @GetMapping("/{id}")

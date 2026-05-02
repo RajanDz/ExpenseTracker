@@ -1,7 +1,6 @@
 package com.expenseTracker.expensetracker.service;
 
 
-import com.expenseTracker.expensetracker.dto.Category;
 import com.expenseTracker.expensetracker.dto.CreateExpenseDto;
 import com.expenseTracker.expensetracker.dto.UpdateExpenseFields;
 import com.expenseTracker.expensetracker.model.BudgetList;

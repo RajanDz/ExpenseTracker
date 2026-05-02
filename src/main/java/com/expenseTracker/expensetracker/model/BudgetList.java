@@ -2,13 +2,8 @@ package com.expenseTracker.expensetracker.model;
 
 
 import com.expenseTracker.expensetracker.common.Validate;
-import com.expenseTracker.expensetracker.dto.BudgetTypes;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -27,6 +22,7 @@ public class BudgetList {
         this.remainingBudget = budget;
         this.startDate = Validate.notNull(startDate,"start date");
         this.endDate = Validate.notNull(endDate, "end date");
+        Validate.dateRange(startDate,endDate);
         this.type = Validate.notNull(type, "type");
         this.user = Validate.notNull(user,"user");
     }

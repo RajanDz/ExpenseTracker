@@ -1,4 +1,4 @@
-package com.expenseTracker.expensetracker.dto;
+package com.expenseTracker.expensetracker.model;
 
 public enum BudgetTypes {
     STRICT,

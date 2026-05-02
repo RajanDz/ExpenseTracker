@@ -1,7 +1,6 @@
 package com.expenseTracker.expensetracker.dto;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.expenseTracker.expensetracker.model.CustomUserDetails;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
@@ -16,5 +15,5 @@ public class CreateExpenseDto {
     @NotNull
     private BigDecimal amount;
     @NotNull
-    private Category category;
+    private CustomUserDetails.Category category;
 }

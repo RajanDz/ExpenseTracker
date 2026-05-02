@@ -1,12 +1,9 @@
 package com.expenseTracker.expensetracker.model;
 
 
-import com.expenseTracker.expensetracker.dto.Category;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,12 +22,10 @@ public class Expense {
 
     @Column(name = "name")
     @NotNull
-    @Setter
     private String name;
 
     @Column(name = "amount")
     @NotNull
-    @Setter
     private BigDecimal amount;
 
     @Column(name = "date_time", updatable = false)
@@ -39,13 +34,11 @@ public class Expense {
 
     @Column(name = "category")
     @NotNull
-    @Setter
     @Enumerated(EnumType.STRING)
-    private Category category;
+    private CustomUserDetails.Category category;
 
     @ManyToOne
     @JoinColumn(name = "budget_list")
-    @Setter
     private BudgetList budgetList;
 
     public void editName(String name){
@@ -54,7 +47,7 @@ public class Expense {
         }
         this.name = name;
     }
-    public void editCategory(Category category){
+    public void editCategory(CustomUserDetails.Category category){
         if (category == null){
             throw new IllegalArgumentException("You need to provide valid category");
         }

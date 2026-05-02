@@ -1,5 +1,6 @@
 package com.expenseTracker.expensetracker.dto;
 
+import com.expenseTracker.expensetracker.model.BudgetTypes;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
@@ -18,5 +19,5 @@ public class CreateBudgetDto {
     @NotNull
     private LocalDate endDate;
     @NotNull
-    private String type;
+    private BudgetTypes type;
 }
