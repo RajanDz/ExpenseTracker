@@ -1,6 +1,6 @@
 package com.expenseTracker.expensetracker.dto;
 
-import com.expenseTracker.expensetracker.model.CustomUserDetails;
+import com.expenseTracker.expensetracker.model.Category;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
@@ -15,5 +15,5 @@ public class CreateExpenseDto {
     @NotNull
     private BigDecimal amount;
     @NotNull
-    private CustomUserDetails.Category category;
+    private Category category;
 }

@@ -35,7 +35,7 @@ public class Expense {
     @Column(name = "category")
     @NotNull
     @Enumerated(EnumType.STRING)
-    private CustomUserDetails.Category category;
+    private Category category;
 
     @ManyToOne
     @JoinColumn(name = "budget_list")
@@ -47,7 +47,7 @@ public class Expense {
         }
         this.name = name;
     }
-    public void editCategory(CustomUserDetails.Category category){
+    public void editCategory(Category category){
         if (category == null){
             throw new IllegalArgumentException("You need to provide valid category");
         }
@@ -58,5 +58,8 @@ public class Expense {
             throw new IllegalArgumentException("Amount must be greater than zero");
         }
         this.amount = amount;
+    }
+    public void editBudgetId(BudgetList budget){
+        this.budgetList = budget;
     }
 }

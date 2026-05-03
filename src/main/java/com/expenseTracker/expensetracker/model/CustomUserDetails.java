@@ -59,9 +59,5 @@ private String password;
         return UserDetails.super.isEnabled();
     }
 
-    public enum Category {
-        IMPORTANT,
-        OPTIONAL,
-        WISH
-    }
+
 }

@@ -26,7 +26,7 @@ public class BudgetService {
 
     private final UserRepository userRepository;
     private final BudgetListRepository budgetListRepository;
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final Logger logger = LoggerFactory.getLogger(BudgetService.class);
 
 
     @Transactional
