@@ -59,7 +59,7 @@ public class Expense {
         }
         this.amount = amount;
     }
-    public void editBudgetId(BudgetList budget){
+    public void assignToBudget(BudgetList budget){
         this.budgetList = budget;
     }
 }

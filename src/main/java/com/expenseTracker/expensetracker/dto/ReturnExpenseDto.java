@@ -1,6 +1,6 @@
 package com.expenseTracker.expensetracker.dto;
 
-import com.expenseTracker.expensetracker.model.CustomUserDetails;
+import com.expenseTracker.expensetracker.model.Category;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,5 +8,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ReturnExpenseDto {
     private String name;
-    private CustomUserDetails.Category category;
+    private Category category;
 }

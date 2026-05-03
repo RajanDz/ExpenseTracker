@@ -64,7 +64,7 @@ public class BudgetList {
             flexBudgetValidation(expense.getAmount());
         }
         this.expenses.add(expense);
-        expense.editBudgetId(this);
+        expense.assignToBudget(this);
         this.remainingBudget = this.remainingBudget.subtract(expense.getAmount());
     }
 

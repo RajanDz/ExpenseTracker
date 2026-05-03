@@ -25,7 +25,7 @@ public class ExpenseService {
 
     private final BudgetListRepository budgetListRepository;
     private final ExpenseRepository expenseRepository;
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExpenseService.class);
 
 
 

@@ -42,7 +42,7 @@ public class BudgetService {
 
         userRepository.save(user);
         budgetListRepository.save(budget);
-        return new BudgetResponseDto(budget.getName(),budget.getBudget(),budget.getBudget(),budget.getStartDate(),budget.getEndDate(),String.valueOf(budget.getType()));
+        return new BudgetResponseDto(budget.getName(),budget.getBudget(),budget.getRemainingBudget(),budget.getStartDate(),budget.getEndDate(),String.valueOf(budget.getType()));
     }
 
     @Transactional
