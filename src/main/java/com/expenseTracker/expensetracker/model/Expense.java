@@ -62,4 +62,6 @@ public class Expense {
     public void assignToBudget(BudgetList budget){
         this.budgetList = budget;
     }
+
+
 }

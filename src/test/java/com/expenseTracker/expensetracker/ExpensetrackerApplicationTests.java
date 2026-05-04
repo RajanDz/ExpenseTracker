@@ -1,10 +1,7 @@
 package com.expenseTracker.expensetracker;
 
 import com.expenseTracker.expensetracker.dto.BudgetExpenseDto;
-import com.expenseTracker.expensetracker.model.BudgetList;
-import com.expenseTracker.expensetracker.model.Expense;
-import com.expenseTracker.expensetracker.model.Role;
-import com.expenseTracker.expensetracker.model.User;
+import com.expenseTracker.expensetracker.model.*;
 import com.expenseTracker.expensetracker.repository.BudgetListRepository;
 import com.expenseTracker.expensetracker.repository.ExpenseRepository;
 import com.expenseTracker.expensetracker.repository.RoleRepository;
@@ -23,7 +20,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-@Disabled
 @SpringBootTest(classes = ExpensetrackerApplication.class)
 class ExpensetrackerApplicationTests {
 
@@ -96,7 +92,7 @@ class ExpensetrackerApplicationTests {
 				.name("Patike")
 				.amount(BigDecimal.valueOf(45))
 				.dateTime(LocalDateTime.now())
-				.category("OBAVEZNO")
+				.category(Category.IMPORTANT)
 				.build();
 		budgetList.addExpense(expense);
 		budgetListRepository.save(budgetList);

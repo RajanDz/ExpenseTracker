@@ -43,10 +43,6 @@ public class ExpenseService {
                 .build();
 
         budgetList.addExpense(expense);
-        if (budgetList.getRemainingBudget().compareTo(BigDecimal.ZERO) <= 0){
-            logger.warn("Budget overspent for budgetId={}", budgetList.getId());
-        }
-
         budgetListRepository.save(budgetList);
         return budgetList;
     }
