@@ -2,6 +2,8 @@ package com.expenseTracker.expensetracker.service;
 
 
 import com.expenseTracker.expensetracker.dto.CreateExpenseDto;
+import com.expenseTracker.expensetracker.dto.ExpenseResponse;
+import com.expenseTracker.expensetracker.dto.ExpensesListResponse;
 import com.expenseTracker.expensetracker.dto.UpdateExpenseFields;
 import com.expenseTracker.expensetracker.model.BudgetList;
 import com.expenseTracker.expensetracker.model.Expense;
@@ -12,12 +14,16 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +37,6 @@ public class ExpenseService {
 
     @Transactional
     public BudgetList addExpenseToBudgetList(CreateExpenseDto createExpense, User user){
-//        BudgetList budgetList = budgetListRepository.findBudgetById(createExpense.getBudgetId()).orElseThrow();
         BudgetList budgetList = budgetListRepository.findByIdAndUserId(createExpense.getBudgetId(), user.getId()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with id: " + user.getId())
         );
@@ -75,5 +80,9 @@ public class ExpenseService {
         return expense;
     }
 
-
+    public Page<ExpenseResponse> budgetExpenses(long budgetId, User user, Pageable pageable){
+        BudgetList budget = budgetListRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
+        return expenseRepository.findByBudgetListId(budget.getId(),pageable).map(expense -> new ExpenseResponse(expense.getName(),expense.getAmount(),expense.getCategory()));
+    }
 }

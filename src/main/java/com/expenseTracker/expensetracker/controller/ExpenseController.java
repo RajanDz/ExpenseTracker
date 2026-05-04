@@ -9,9 +9,14 @@ import com.expenseTracker.expensetracker.service.ExpenseService;
 import com.expenseTracker.expensetracker.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/expense")
@@ -41,5 +46,12 @@ public class ExpenseController {
         User user = userService.getLoggedUser(authentication);
         expenseService.deleteExpense(expenseId,user);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{budgetId}")
+    public ResponseEntity<Page<ExpenseResponse>> getBudgetExpenses(@PathVariable(name = "budgetId") long budgetId, Authentication authentication, @PageableDefault(size = 10) Pageable pageable){
+        User user = userService.getAuthUser(authentication);
+        Page<ExpenseResponse> expensesList = expenseService.budgetExpenses(budgetId,user,pageable);
+        return ResponseEntity.ok(expensesList);
     }
 }
