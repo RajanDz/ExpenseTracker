@@ -1,9 +1,11 @@
 package com.expenseTracker.expensetracker.model;
 
 
+import com.expenseTracker.expensetracker.dto.CreateExpenseDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,33 +24,52 @@ public class Expense {
 
     @Column(name = "name")
     @NotNull
-    @Setter
     private String name;
 
     @Column(name = "amount")
     @NotNull
-    @Setter
     private BigDecimal amount;
 
     @Column(name = "date_time", updatable = false)
-    @NotNull
+    @CreationTimestamp
     private LocalDateTime dateTime;
 
     @Column(name = "category")
     @NotNull
-    @Setter
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     @ManyToOne
     @JoinColumn(name = "budget_list")
-    @Setter
     private BudgetList budgetList;
 
     public void editName(String name){
+        if (name == null || name.isBlank()){
+            throw new IllegalArgumentException("You need to provide valid name.");
+        }
         this.name = name;
     }
-    public void editCategory(String category){
+    public void editCategory(Category category){
+        if (category == null){
+            throw new IllegalArgumentException("You need to provide valid category");
+        }
         this.category = category;
     }
+    public void editAmount(BigDecimal amount){
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0){
+            throw new IllegalArgumentException("Amount must be greater than zero");
+        }
+        this.amount = amount;
+    }
+    public void assignToBudget(BudgetList budget){
+        this.budgetList = budget;
+    }
 
+    public static Expense createExpense(String name, BigDecimal amount, Category category){
+        return builder()
+                .name(name)
+                .amount(amount)
+                .category(category)
+                .build();
+    }
 }

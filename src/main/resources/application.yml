@@ -20,5 +20,3 @@ app:
   jwtSecret: ${JWT_SECRET}
   jwtExpirationMs: ${JWT_EXPIRATION_MS}
   authCookieName: jwtToken
-
-

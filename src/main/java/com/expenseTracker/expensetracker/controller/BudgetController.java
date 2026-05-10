@@ -1,17 +1,21 @@
 package com.expenseTracker.expensetracker.controller;
 
 
-import com.expenseTracker.expensetracker.dto.BudgetResponseDto;
-import com.expenseTracker.expensetracker.dto.CreateBudgetDto;
+import com.expenseTracker.expensetracker.dto.*;
 import com.expenseTracker.expensetracker.model.BudgetList;
 import com.expenseTracker.expensetracker.model.User;
 import com.expenseTracker.expensetracker.service.BudgetService;
 import com.expenseTracker.expensetracker.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/budget")
@@ -24,24 +28,41 @@ public class BudgetController {
 
     @PostMapping
     public ResponseEntity<BudgetResponseDto> createBudgetList(@Valid @RequestBody CreateBudgetDto budgetList, Authentication authentication){
-
         User user = userService.getLoggedUser(authentication);
         BudgetResponseDto createBudget = budgetService.createBudgetList(budgetList,user);
-        return ResponseEntity.ok(createBudget);
+         return ResponseEntity.ok(createBudget);
     }
-
+    @GetMapping("/budgetExpense/{budgetId}")
+    public ResponseEntity<PagedExpenseResponse> getBudgetExpenses(@PathVariable(name = "budgetId") long budgetId
+            , Authentication authentication
+            , @PageableDefault(size = 10) Pageable pageable){
+        User user = userService.getAuthUser(authentication);
+        Page<ExpenseResponse> expensesList = budgetService.budgetExpenses(budgetId,user,pageable);
+        return ResponseEntity.ok(new PagedExpenseResponse(
+                expensesList.getContent(),
+                expensesList.getNumber(),
+                expensesList.getTotalPages(),
+                expensesList.getTotalElements(),
+                expensesList.hasNext()));
+    }
     @GetMapping("/{id}")
     public ResponseEntity<BudgetResponseDto> getBudget(@PathVariable(name = "id") long id, Authentication authentication){
         User user = userService.getLoggedUser(authentication);
         BudgetList budgetList = budgetService.getBudget(id,user);
-        return ResponseEntity.ok().body(new BudgetResponseDto(budgetList.getName(),budgetList.getBudget(),budgetList.getRemaining_budget(),budgetList.getStartDate(),budgetList.getEndDate()));
+        return ResponseEntity.ok().body(new BudgetResponseDto(budgetList.getName(),budgetList.getBudget(),budgetList.getRemainingBudget(),budgetList.getStartDate(),budgetList.getEndDate(),String.valueOf(budgetList.getType())));
     }
 
     @GetMapping("/getPrimaryBudget")
     public ResponseEntity<BudgetResponseDto> getDefaultBudget(Authentication authentication){
         User user = userService.getLoggedUser(authentication);
         BudgetList budgetList = budgetService.getDefaultBudget(user);
-        return ResponseEntity.ok().body(new BudgetResponseDto(budgetList.getName(),budgetList.getBudget(),budgetList.getRemaining_budget(),budgetList.getStartDate(),budgetList.getEndDate()));
+        return ResponseEntity.ok().body(new BudgetResponseDto(budgetList.getName(),budgetList.getBudget(),budgetList.getRemainingBudget(),budgetList.getStartDate(),budgetList.getEndDate(),String.valueOf(budgetList.getType())));
+    }
+    @GetMapping("/getBudgetExpenses/{id}")
+    public ResponseEntity<BudgetDetailsResponse> getBudgetExpenses(@PathVariable(name = "id") Long id, Authentication authentication){
+        User user = userService.getLoggedUser(authentication);
+        BudgetDetailsResponse budgetResponseDto = budgetService.budgetExpenses(user,id);
+        return ResponseEntity.ok(budgetResponseDto);
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBudget(@PathVariable(name = "id") Long id, Authentication authentication){

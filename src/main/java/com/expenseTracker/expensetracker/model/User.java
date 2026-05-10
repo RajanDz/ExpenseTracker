@@ -3,6 +3,7 @@ package com.expenseTracker.expensetracker.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -50,8 +51,33 @@ public class User {
     inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public void createBudget(BudgetList budgetList){
-        this.budgetLists.add(budgetList);
-        budgetList.setUser(this);
+    public void createBudget(BudgetList budget){
+        this.budgetLists.add(budget);
+    }
+
+    public void editUsername(String username){
+        if (!username.matches(".*[A-Z].*")){
+            throw new IllegalArgumentException("Username must have at least one uppercase character");
+        }
+        if (!username.matches(".*[0-9].*")){
+            throw  new IllegalArgumentException("Username must have at least one number");
+        }
+        this.username = username;
+    }
+
+    public void editEmail(String email){
+        this.email = email.toLowerCase();
+    }
+
+    public void validatePassword(String password){
+        if (!password.matches(".*[A-Z].*")){
+            throw new IllegalArgumentException("Password must have at least one upper case character.");
+        }
+        if (!password.matches(".*[0-9].*")){
+            throw new IllegalArgumentException("Password must have at least one number.");
+        }
+    }
+    public void editPassword(String encodedPassword){
+        this.password = encodedPassword;
     }
 }
