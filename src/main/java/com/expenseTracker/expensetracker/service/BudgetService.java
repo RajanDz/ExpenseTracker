@@ -46,7 +46,7 @@ public class BudgetService {
 
         userRepository.save(user);
         budgetListRepository.save(budget);
-        return new BudgetResponseDto(budget.getName(),budget.getBudget(),budget.getRemainingBudget(),budget.getStartDate(),budget.getEndDate(),String.valueOf(budget.getType()));
+        return new BudgetResponseDto(budget.getId(),budget.getName(),budget.getBudget(),budget.getRemainingBudget(),budget.getStartDate(),budget.getEndDate(),String.valueOf(budget.getType()));
     }
 
     public Page<ExpenseResponse> budgetExpenses(long budgetId, User user, Pageable pageable){
