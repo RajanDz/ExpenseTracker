@@ -49,14 +49,14 @@ public class BudgetController {
     public ResponseEntity<BudgetResponseDto> getBudget(@PathVariable(name = "id") long id, Authentication authentication){
         User user = userService.getLoggedUser(authentication);
         BudgetList budgetList = budgetService.getBudget(id,user);
-        return ResponseEntity.ok().body(new BudgetResponseDto(budgetList.getName(),budgetList.getBudget(),budgetList.getRemainingBudget(),budgetList.getStartDate(),budgetList.getEndDate(),String.valueOf(budgetList.getType())));
+        return ResponseEntity.ok().body(new BudgetResponseDto(budgetList.getId(),budgetList.getName(),budgetList.getBudget(),budgetList.getRemainingBudget(),budgetList.getStartDate(),budgetList.getEndDate(),String.valueOf(budgetList.getType())));
     }
 
     @GetMapping("/getPrimaryBudget")
     public ResponseEntity<BudgetResponseDto> getDefaultBudget(Authentication authentication){
         User user = userService.getLoggedUser(authentication);
         BudgetList budgetList = budgetService.getDefaultBudget(user);
-        return ResponseEntity.ok().body(new BudgetResponseDto(budgetList.getName(),budgetList.getBudget(),budgetList.getRemainingBudget(),budgetList.getStartDate(),budgetList.getEndDate(),String.valueOf(budgetList.getType())));
+        return ResponseEntity.ok().body(new BudgetResponseDto(budgetList.getId(),budgetList.getName(),budgetList.getBudget(),budgetList.getRemainingBudget(),budgetList.getStartDate(),budgetList.getEndDate(),String.valueOf(budgetList.getType())));
     }
     @GetMapping("/getBudgetExpenses/{id}")
     public ResponseEntity<BudgetDetailsResponse> getBudgetExpenses(@PathVariable(name = "id") Long id, Authentication authentication){
