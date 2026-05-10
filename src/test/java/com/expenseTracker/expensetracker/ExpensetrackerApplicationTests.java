@@ -6,8 +6,6 @@ import com.expenseTracker.expensetracker.repository.BudgetListRepository;
 import com.expenseTracker.expensetracker.repository.ExpenseRepository;
 import com.expenseTracker.expensetracker.repository.RoleRepository;
 import com.expenseTracker.expensetracker.repository.UserRepository;
-import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -94,7 +91,7 @@ class ExpensetrackerApplicationTests {
 				.dateTime(LocalDateTime.now())
 				.category(Category.IMPORTANT)
 				.build();
-		budgetList.addExpense(expense);
+		budgetList.assignExpense(expense);
 		budgetListRepository.save(budgetList);
 		logger.info("Expense added: {}", budgetList);
 	}

@@ -48,10 +48,5 @@ public class ExpenseController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{budgetId}")
-    public ResponseEntity<Page<ExpenseResponse>> getBudgetExpenses(@PathVariable(name = "budgetId") long budgetId, Authentication authentication, @PageableDefault(size = 10) Pageable pageable){
-        User user = userService.getAuthUser(authentication);
-        Page<ExpenseResponse> expensesList = expenseService.budgetExpenses(budgetId,user,pageable);
-        return ResponseEntity.ok(expensesList);
-    }
+
 }

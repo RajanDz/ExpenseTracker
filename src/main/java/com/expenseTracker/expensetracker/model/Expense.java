@@ -1,9 +1,11 @@
 package com.expenseTracker.expensetracker.model;
 
 
+import com.expenseTracker.expensetracker.dto.CreateExpenseDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,7 +31,7 @@ public class Expense {
     private BigDecimal amount;
 
     @Column(name = "date_time", updatable = false)
-    @NotNull
+    @CreationTimestamp
     private LocalDateTime dateTime;
 
     @Column(name = "category")
@@ -63,5 +65,11 @@ public class Expense {
         this.budgetList = budget;
     }
 
-
+    public static Expense createExpense(String name, BigDecimal amount, Category category){
+        return builder()
+                .name(name)
+                .amount(amount)
+                .category(category)
+                .build();
+    }
 }

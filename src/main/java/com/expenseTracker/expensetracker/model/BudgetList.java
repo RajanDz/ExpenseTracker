@@ -57,45 +57,58 @@ public class BudgetList {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public void addExpense(Expense expense){
+    public void assignExpense(Expense expense){
         if (this.type == BudgetTypes.STRICT){
             strictBudgetValidation(expense.getAmount());
         } else if (this.type == BudgetTypes.FLEX){
             flexBudgetValidation(expense.getAmount());
         }
-        this.expenses.add(expense);
         expense.assignToBudget(this);
+        this.expenses.add(expense);
         this.remainingBudget = this.remainingBudget.subtract(expense.getAmount());
     }
 
     public void updateExpenseAmount(Expense expense, BigDecimal newAmount){
-        BigDecimal delta;
         if (newAmount == null){
             throw new IllegalArgumentException("Amount must not be null");
         }
 
-        if (newAmount.compareTo(expense.getAmount()) > 0){
-            delta = newAmount.subtract(expense.getAmount());
-            this.remainingBudget = this.remainingBudget.subtract(delta);
+        BigDecimal simulated = this.remainingBudget.add(expense.getAmount()).subtract(newAmount);
 
-        } else if (newAmount.compareTo(expense.getAmount()) < 0){
-                delta = expense.getAmount().subtract(newAmount);
-                this.remainingBudget = this.remainingBudget.add(delta);
+        if (this.type == BudgetTypes.STRICT){
+            strictValidateSimulated(simulated);
+        } else if (this.type == BudgetTypes.FLEX){
+            flexValidateSimulated(simulated);
         }
+        this.remainingBudget = simulated;
         expense.editAmount(newAmount);
+
     }
 
     public void updateBudgetAfterExpenseDelete(Expense expense){
         this.remainingBudget = this.remainingBudget.add(expense.getAmount());
     }
 
-    public void strictBudgetValidation(BigDecimal amount){
+    private void strictValidateSimulated(BigDecimal simulatedRemaining){
+        if (simulatedRemaining.compareTo(BigDecimal.ZERO) < 0){
+            throw new IllegalArgumentException("You cannot spend over budget limit");
+        }
+    }
+
+    private void flexValidateSimulated(BigDecimal simulatedRemaining){
+        BigDecimal tenPercent = this.budget.multiply(new BigDecimal("0.10"));
+        if (simulatedRemaining.compareTo(tenPercent.negate()) < 0){
+            throw new IllegalArgumentException("Flex budget allows max 10% over limit");
+        }
+    }
+
+    private void strictBudgetValidation(BigDecimal amount){
         if (amount.compareTo(this.remainingBudget) > 0){
             throw new IllegalArgumentException("You cannot spent over budget limit. We suggest you to switch to FLEX budget");
         }
     }
-    public void flexBudgetValidation(BigDecimal amount){
-        BigDecimal tenPercent = budget.multiply(new BigDecimal("0.10"));
+    private void flexBudgetValidation(BigDecimal amount){
+        BigDecimal tenPercent = this.budget.multiply(new BigDecimal("0.10"));
         BigDecimal newAmount = remainingBudget.subtract(amount);
         if (newAmount.compareTo(tenPercent.negate()) < 0){
             throw new IllegalArgumentException("Flex budget allows max 10% over limit");

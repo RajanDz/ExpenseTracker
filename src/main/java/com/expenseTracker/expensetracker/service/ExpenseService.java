@@ -3,7 +3,6 @@ package com.expenseTracker.expensetracker.service;
 
 import com.expenseTracker.expensetracker.dto.CreateExpenseDto;
 import com.expenseTracker.expensetracker.dto.ExpenseResponse;
-import com.expenseTracker.expensetracker.dto.ExpensesListResponse;
 import com.expenseTracker.expensetracker.dto.UpdateExpenseFields;
 import com.expenseTracker.expensetracker.model.BudgetList;
 import com.expenseTracker.expensetracker.model.Expense;
@@ -20,10 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,16 +34,10 @@ public class ExpenseService {
     @Transactional
     public BudgetList addExpenseToBudgetList(CreateExpenseDto createExpense, User user){
         BudgetList budgetList = budgetListRepository.findByIdAndUserId(createExpense.getBudgetId(), user.getId()).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with id: " + user.getId())
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with id: " + createExpense.getBudgetId())
         );
-        Expense expense = Expense.builder().name(createExpense
-                        .getName())
-                .amount(createExpense.getAmount())
-                .dateTime(LocalDateTime.now())
-                .category(createExpense.getCategory())
-                .build();
-
-        budgetList.addExpense(expense);
+        Expense expense = Expense.createExpense(createExpense.getName(),createExpense.getAmount(),createExpense.getCategory());
+        budgetList.assignExpense(expense);
         budgetListRepository.save(budgetList);
         return budgetList;
     }
@@ -80,9 +70,5 @@ public class ExpenseService {
         return expense;
     }
 
-    public Page<ExpenseResponse> budgetExpenses(long budgetId, User user, Pageable pageable){
-        BudgetList budget = budgetListRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
-        return expenseRepository.findByBudgetListId(budget.getId(),pageable).map(expense -> new ExpenseResponse(expense.getName(),expense.getAmount(),expense.getCategory()));
-    }
+
 }

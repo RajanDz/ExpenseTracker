@@ -5,11 +5,14 @@ import com.expenseTracker.expensetracker.model.BudgetList;
 import com.expenseTracker.expensetracker.model.Expense;
 import com.expenseTracker.expensetracker.model.User;
 import com.expenseTracker.expensetracker.repository.BudgetListRepository;
+import com.expenseTracker.expensetracker.repository.ExpenseRepository;
 import com.expenseTracker.expensetracker.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,6 +29,7 @@ public class BudgetService {
 
     private final UserRepository userRepository;
     private final BudgetListRepository budgetListRepository;
+    private final ExpenseRepository expenseRepository;
     private static final Logger logger = LoggerFactory.getLogger(BudgetService.class);
 
 
@@ -43,6 +47,16 @@ public class BudgetService {
         userRepository.save(user);
         budgetListRepository.save(budget);
         return new BudgetResponseDto(budget.getName(),budget.getBudget(),budget.getRemainingBudget(),budget.getStartDate(),budget.getEndDate(),String.valueOf(budget.getType()));
+    }
+
+    public Page<ExpenseResponse> budgetExpenses(long budgetId, User user, Pageable pageable){
+        BudgetList budget = budgetListRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
+        return  expenseRepository.findByBudgetListId(budget.getId(),pageable).map(expense -> new ExpenseResponse(
+                expense.getName(),
+                expense.getAmount(),
+                expense.getCategory()
+        ));
     }
 
     @Transactional
