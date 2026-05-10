@@ -10,7 +10,8 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 public class BudgetResponseDto {
-
+    @NotNull
+    private Long id;
     @NotNull
     private String name;
     @NotNull
