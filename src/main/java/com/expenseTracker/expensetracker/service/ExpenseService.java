@@ -36,7 +36,7 @@ public class ExpenseService {
         BudgetList budgetList = budgetListRepository.findByIdAndUserId(createExpense.getBudgetId(), user.getId()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with id: " + createExpense.getBudgetId())
         );
-        Expense expense = Expense.createExpense(createExpense.getName(),createExpense.getAmount(),createExpense.getCategory());
+        Expense expense = Expense.createExpense(createExpense.getTitle(),createExpense.getAmount(),createExpense.getCategory());
         budgetList.assignExpense(expense);
         budgetListRepository.save(budgetList);
         return budgetList;
