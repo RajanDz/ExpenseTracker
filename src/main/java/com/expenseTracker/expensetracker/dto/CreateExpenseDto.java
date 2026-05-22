@@ -13,7 +13,7 @@ public class CreateExpenseDto {
     @NotNull
     private Long budgetId;
     @NotBlank
-    private String name;
+    private String title;
     @NotNull
     @Positive
     private BigDecimal amount;
