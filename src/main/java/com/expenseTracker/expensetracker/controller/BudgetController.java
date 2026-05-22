@@ -36,7 +36,7 @@ public class BudgetController {
     public ResponseEntity<PagedExpenseResponse> getBudgetExpenses(@PathVariable(name = "budgetId") long budgetId
             , Authentication authentication
             , @PageableDefault(size = 10) Pageable pageable){
-        User user = userService.getAuthUser(authentication);
+        User user = userService.getLoggedUser(authentication);
         Page<ExpenseResponse> expensesList = budgetService.budgetExpenses(budgetId,user,pageable);
         return ResponseEntity.ok(new PagedExpenseResponse(
                 expensesList.getContent(),
