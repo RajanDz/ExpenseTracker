@@ -40,11 +40,7 @@ public class UserService {
         CustomUserDetails authUser = (CustomUserDetails) authentication.getPrincipal();
         return userRepository.findByUsername(authUser.getUsername()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
-    public User getAuthUser(Authentication authentication){
-        UserDetails user = (UserDetails) authentication.getPrincipal();
-        return userRepository.findByUsername(user.getUsername()).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Not authenticated"));
-    }
+
     public void editUserDetail(User user, EditUserDetails userDetails){
         if (userDetails.getUsername() != null){
             if (userRepository.findByUsername(userDetails.getUsername()).isPresent()){
