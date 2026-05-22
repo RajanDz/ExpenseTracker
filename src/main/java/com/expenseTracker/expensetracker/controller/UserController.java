@@ -29,7 +29,7 @@ public class UserController {
 
     @PatchMapping
     public ResponseEntity<Void> editUserDetails(@Valid @RequestBody EditUserDetails userDetails, Authentication authentication){
-        User user = userService.getAuthUser(authentication);
+        User user = userService.getLoggedUser(authentication);
         userService.editUserDetail(user,userDetails);
         return ResponseEntity.noContent().build();
     }
