@@ -30,6 +30,6 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<SignupResponseDto> signup(@Valid @RequestBody SignUpRequest signUpRequest){
         User user = authService.signup(signUpRequest);
-        return ResponseEntity.ok().body(new SignupResponseDto(user.getName(),"Account created."));
+        return ResponseEntity.ok().body(new SignupResponseDto(user.getName(),"Account created"));
     }
 }
