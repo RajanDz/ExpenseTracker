@@ -51,6 +51,7 @@ public class BudgetService {
         Budget budget = budgetListRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
         return  expenseRepository.findByBudgetId(budget.getId(),pageable).map(expense -> new ExpenseResponse(
+                expense.getId(),
                 expense.getName(),
                 expense.getAmount(),
                 expense.getCategory()

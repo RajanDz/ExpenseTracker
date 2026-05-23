@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Getter
 @AllArgsConstructor
 public class ExpenseResponse {
-
+    private long id;
     private String name;
     private BigDecimal amount;
     private Category category;
