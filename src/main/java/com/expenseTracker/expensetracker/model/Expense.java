@@ -1,7 +1,6 @@
 package com.expenseTracker.expensetracker.model;
 
 
-import com.expenseTracker.expensetracker.dto.CreateExpenseDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -40,8 +39,8 @@ public class Expense {
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name = "budget_list")
-    private BudgetList budgetList;
+    @JoinColumn(name = "budget")
+    private Budget budget;
 
     public void editName(String name){
         if (name == null || name.isBlank()){
@@ -61,8 +60,8 @@ public class Expense {
         }
         this.amount = amount;
     }
-    public void assignToBudget(BudgetList budget){
-        this.budgetList = budget;
+    public void assignToBudget(Budget budget){
+        this.budget = budget;
     }
 
     public static Expense createExpense(String name, BigDecimal amount, Category category){

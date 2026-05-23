@@ -2,7 +2,7 @@ package com.expenseTracker.expensetracker.controller;
 
 
 import com.expenseTracker.expensetracker.dto.*;
-import com.expenseTracker.expensetracker.model.BudgetList;
+import com.expenseTracker.expensetracker.model.Budget;
 import com.expenseTracker.expensetracker.model.User;
 import com.expenseTracker.expensetracker.service.BudgetService;
 import com.expenseTracker.expensetracker.service.UserService;
@@ -15,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/budget")
 @RequiredArgsConstructor
@@ -24,6 +22,7 @@ public class BudgetController {
 
     private final BudgetService budgetService;
     private final UserService userService;
+
 
 
     @PostMapping
@@ -48,15 +47,15 @@ public class BudgetController {
     @GetMapping("/{id}")
     public ResponseEntity<BudgetResponseDto> getBudget(@PathVariable(name = "id") long id, Authentication authentication){
         User user = userService.getLoggedUser(authentication);
-        BudgetList budgetList = budgetService.getBudget(id,user);
-        return ResponseEntity.ok().body(new BudgetResponseDto(budgetList.getId(),budgetList.getName(),budgetList.getBudget(),budgetList.getRemainingBudget(),budgetList.getStartDate(),budgetList.getEndDate(),String.valueOf(budgetList.getType())));
+        Budget budget = budgetService.getBudget(id,user);
+        return ResponseEntity.ok().body(new BudgetResponseDto(budget.getId(), budget.getName(), budget.getBudget(), budget.getRemainingBudget(), budget.getStartDate(), budget.getEndDate(),String.valueOf(budget.getType())));
     }
 
     @GetMapping("/getPrimaryBudget")
     public ResponseEntity<BudgetResponseDto> getDefaultBudget(Authentication authentication){
         User user = userService.getLoggedUser(authentication);
-        BudgetList budgetList = budgetService.getDefaultBudget(user);
-        return ResponseEntity.ok().body(new BudgetResponseDto(budgetList.getId(),budgetList.getName(),budgetList.getBudget(),budgetList.getRemainingBudget(),budgetList.getStartDate(),budgetList.getEndDate(),String.valueOf(budgetList.getType())));
+        Budget budget = budgetService.getDefaultBudget(user);
+        return ResponseEntity.ok().body(new BudgetResponseDto(budget.getId(), budget.getName(), budget.getBudget(), budget.getRemainingBudget(), budget.getStartDate(), budget.getEndDate(),String.valueOf(budget.getType())));
     }
     @GetMapping("/getBudgetExpenses/{id}")
     public ResponseEntity<BudgetDetailsResponse> getBudgetExpenses(@PathVariable(name = "id") Long id, Authentication authentication){

@@ -1,21 +1,21 @@
 package com.expenseTracker.expensetracker.repository;
 
-import com.expenseTracker.expensetracker.model.BudgetList;
+import com.expenseTracker.expensetracker.model.Budget;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface BudgetListRepository extends JpaRepository<BudgetList,Long> {
+public interface BudgetListRepository extends JpaRepository<Budget,Long> {
 
     @Query("""
-        select distinct b from BudgetList b
+        select distinct b from Budget b
                 left join fetch b.expenses
                         where b.id = :id
         """)
-    Optional<BudgetList> findBudgetById(@Param("id") Long id);
-    Optional<BudgetList> findByIdAndUserId(Long id,Long userId);
+    Optional<Budget> findBudgetById(@Param("id") Long id);
+    Optional<Budget> findByIdAndUserId(Long id, Long userId);
     Boolean existsByIdAndUserId(Long id, Long userId);
 
-    Optional<BudgetList> findFirstByUserIdAndBudgetIsNotNull(long userId);}
+    Optional<Budget> findFirstByUserIdAndBudgetIsNotNull(long userId);}

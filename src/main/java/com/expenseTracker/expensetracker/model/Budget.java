@@ -14,9 +14,9 @@ import java.util.List;
 @Table(name = "budget_list")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BudgetList {
+public class Budget {
 
-    public BudgetList(String name, BigDecimal budget, LocalDate startDate, LocalDate endDate, BudgetTypes type ,User user) {
+    public Budget(String name, BigDecimal budget, LocalDate startDate, LocalDate endDate, BudgetTypes type , User user) {
         this.name = Validate.text(name, "name");
         this.budget = Validate.positive(budget,"budget");
         this.remainingBudget = budget;
@@ -50,7 +50,7 @@ public class BudgetList {
     @Enumerated(EnumType.STRING)
     private BudgetTypes type;
 
-    @OneToMany(mappedBy = "budgetList", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL)
     private List<Expense> expenses = new ArrayList<>();
 
     @ManyToOne

@@ -3,7 +3,6 @@ package com.expenseTracker.expensetracker.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -43,7 +42,7 @@ public class User {
 
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    List<BudgetList> budgetLists = new ArrayList<>();
+    List<Budget> budgets = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_role",
@@ -51,8 +50,8 @@ public class User {
     inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public void createBudget(BudgetList budget){
-        this.budgetLists.add(budget);
+    public void createBudget(Budget budget){
+        this.budgets.add(budget);
     }
 
     public void editUsername(String username){

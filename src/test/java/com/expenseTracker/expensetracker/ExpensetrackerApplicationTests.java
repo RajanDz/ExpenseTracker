@@ -84,22 +84,22 @@ class ExpensetrackerApplicationTests {
 
 	@Test
 	void addExpenseToList(){
-		BudgetList budgetList = budgetListRepository.findBudgetById(4L).orElseThrow();
+		Budget budget = budgetListRepository.findBudgetById(4L).orElseThrow();
 		Expense expense = Expense.builder()
 				.name("Patike")
 				.amount(BigDecimal.valueOf(45))
 				.dateTime(LocalDateTime.now())
 				.category(Category.IMPORTANT)
 				.build();
-		budgetList.assignExpense(expense);
-		budgetListRepository.save(budgetList);
-		logger.info("Expense added: {}", budgetList);
+		budget.assignExpense(expense);
+		budgetListRepository.save(budget);
+		logger.info("Expense added: {}", budget);
 	}
 
 	@Test
 	void selectExpenseFromList(){
-		BudgetList  budgetList = budgetListRepository.findBudgetById(4L).orElseThrow();
-		List<String> expensiveNames = budgetList.getExpenses().stream().map(Expense::getName).toList();
-		logger.info("Budget list: {}", new BudgetExpenseDto(budgetList.getName(),expensiveNames));
+		Budget budget = budgetListRepository.findBudgetById(4L).orElseThrow();
+		List<String> expensiveNames = budget.getExpenses().stream().map(Expense::getName).toList();
+		logger.info("Budget list: {}", new BudgetExpenseDto(budget.getName(),expensiveNames));
 	}
 }
