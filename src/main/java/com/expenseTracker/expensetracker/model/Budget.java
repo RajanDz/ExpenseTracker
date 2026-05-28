@@ -40,6 +40,22 @@ public class Budget {
     @Column(name = "remaining_budget")
     private BigDecimal remainingBudget;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @Column(name = "start_date")
     private LocalDate startDate;
 

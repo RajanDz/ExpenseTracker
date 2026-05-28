@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 public class ExpenseDetailsResponse {
+    private Long id;
     private String name;
     private BigDecimal amount;
     private LocalDateTime dateTime;

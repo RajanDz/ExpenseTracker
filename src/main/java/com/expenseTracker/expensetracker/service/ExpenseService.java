@@ -33,7 +33,9 @@ public class ExpenseService {
 
         return expenseRepository.findByIdAndBudgetId(expenseId,budget.getId())
                 .map(expense ->
-                        new ExpenseDetailsResponse(expense.getName()
+                        new ExpenseDetailsResponse(
+                                expense.getId(),
+                                expense.getName()
                                 ,expense.getAmount()
                                 ,expense.getDateTime()
                                 ,expense.getCategory()))
