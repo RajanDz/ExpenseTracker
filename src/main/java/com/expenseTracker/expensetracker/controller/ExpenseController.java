@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/expense")
 @RequiredArgsConstructor
@@ -49,5 +51,9 @@ public class ExpenseController {
         return ResponseEntity.noContent().build();
     }
 
-
+    @GetMapping("/getCategories")
+    public ResponseEntity<List<String>> getCategories(){
+        List<String> categories = expenseService.getAllCategories();
+        return ResponseEntity.ok(categories);
+    }
 }

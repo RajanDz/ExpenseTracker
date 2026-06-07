@@ -5,6 +5,7 @@ import com.expenseTracker.expensetracker.dto.CreateExpenseDto;
 import com.expenseTracker.expensetracker.dto.ExpenseDetailsResponse;
 import com.expenseTracker.expensetracker.dto.UpdateExpenseFields;
 import com.expenseTracker.expensetracker.model.Budget;
+import com.expenseTracker.expensetracker.model.Category;
 import com.expenseTracker.expensetracker.model.Expense;
 import com.expenseTracker.expensetracker.model.User;
 import com.expenseTracker.expensetracker.repository.BudgetListRepository;
@@ -17,6 +18,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,5 +85,10 @@ public class ExpenseService {
         return expense;
     }
 
-
+    public List<String> getAllCategories(){
+        List<String> categories = Arrays.stream(Category.values())
+                .map(category -> category.name())
+                .toList();
+        return categories;
+    }
 }
