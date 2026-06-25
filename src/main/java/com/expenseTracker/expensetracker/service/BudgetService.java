@@ -3,7 +3,7 @@ package com.expenseTracker.expensetracker.service;
 import com.expenseTracker.expensetracker.dto.*;
 import com.expenseTracker.expensetracker.model.Budget;
 import com.expenseTracker.expensetracker.model.User;
-import com.expenseTracker.expensetracker.repository.BudgetListRepository;
+import com.expenseTracker.expensetracker.repository.BudgetRepository;
 import com.expenseTracker.expensetracker.repository.ExpenseRepository;
 import com.expenseTracker.expensetracker.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -26,7 +26,7 @@ public class BudgetService {
 
 
     private final UserRepository userRepository;
-    private final BudgetListRepository budgetListRepository;
+    private final BudgetRepository budgetRepository;
     private final ExpenseRepository expenseRepository;
     private static final Logger logger = LoggerFactory.getLogger(BudgetService.class);
 
@@ -39,16 +39,17 @@ public class BudgetService {
                 budgetList.getStartDate(),
                 budgetList.getEndDate(),
                 budgetList.getType(),
+                true,
                 user
         );
 
         userRepository.save(user);
-        budgetListRepository.save(budget);
+        budgetRepository.save(budget);
         return new BudgetResponseDto(budget.getId(),budget.getName(),budget.getBudget(),budget.getRemainingBudget(),budget.getStartDate(),budget.getEndDate(),String.valueOf(budget.getType()));
     }
 
     public Page<ExpenseResponse> budgetExpenses(long budgetId, User user, Pageable pageable){
-        Budget budget = budgetListRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(
+        Budget budget = budgetRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
         return  expenseRepository.findByBudgetId(budget.getId(),pageable).map(expense -> new ExpenseResponse(
                 expense.getId(),
@@ -60,27 +61,27 @@ public class BudgetService {
 
     @Transactional
     public Budget getBudget(long id, User user){
-        return budgetListRepository.findByIdAndUserId(id,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with id:"+ id));
+        return budgetRepository.findByIdAndUserId(id,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with id:"+ id));
     }
 
     @Transactional
     public Budget getDefaultBudget(User user){
-        return budgetListRepository.findFirstByUserIdAndBudgetIsNotNull(user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
+        return budgetRepository.findByUserIdAndActiveTrue(user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"There is no active budget at the moment. Try creating one."));
     }
     @Transactional
     public BudgetDetailsResponse budgetExpenses(User user, Long id){
-        Budget budget = budgetListRepository.findByIdAndUserId(id,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
+        Budget budget = budgetRepository.findByIdAndUserId(id,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
         return new BudgetDetailsResponse(budget.getExpenses().stream().map(expense -> new ReturnExpenseDto(expense.getName(),expense.getCategory())).collect(Collectors.toList()));
 
     }
     @Transactional
     public void deleteBudget(Long budgetId, User user){
-        Budget budget = budgetListRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
-        budgetListRepository.delete(budget);
+        Budget budget = budgetRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
+        budgetRepository.delete(budget);
     }
 
     public Long remainingTimeOfBudget(Long budgetId){
-        Budget budget = budgetListRepository.findById(budgetId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
+        Budget budget = budgetRepository.findById(budgetId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
         return ChronoUnit.DAYS.between(LocalDate.now(), budget.getEndDate());
     }
 

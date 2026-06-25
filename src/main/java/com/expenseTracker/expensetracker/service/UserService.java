@@ -4,7 +4,7 @@ package com.expenseTracker.expensetracker.service;
 import com.expenseTracker.expensetracker.dto.*;
 import com.expenseTracker.expensetracker.model.CustomUserDetails;
 import com.expenseTracker.expensetracker.model.User;
-import com.expenseTracker.expensetracker.repository.BudgetListRepository;
+import com.expenseTracker.expensetracker.repository.BudgetRepository;
 import com.expenseTracker.expensetracker.repository.ExpenseRepository;
 import com.expenseTracker.expensetracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final BudgetListRepository budgetListRepository;
+    private final BudgetRepository budgetRepository;
     private final ExpenseRepository expenseRepository;
     private final PasswordEncoder passwordEncoder;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);

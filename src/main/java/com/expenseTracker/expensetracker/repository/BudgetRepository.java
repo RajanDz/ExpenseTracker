@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface BudgetListRepository extends JpaRepository<Budget,Long> {
+public interface BudgetRepository extends JpaRepository<Budget,Long> {
 
     @Query("""
         select distinct b from Budget b
@@ -18,4 +18,6 @@ public interface BudgetListRepository extends JpaRepository<Budget,Long> {
     Optional<Budget> findByIdAndUserId(Long id, Long userId);
     Boolean existsByIdAndUserId(Long id, Long userId);
 
+
+    Optional<Budget> findByUserIdAndActiveTrue(long userId);
     Optional<Budget> findFirstByUserIdAndBudgetIsNotNull(long userId);}
