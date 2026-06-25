@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Budget {
 
-    public Budget(String name, BigDecimal budget, LocalDate startDate, LocalDate endDate, BudgetTypes type , User user) {
+    public Budget(String name, BigDecimal budget, LocalDate startDate, LocalDate endDate, BudgetTypes type , boolean active, User user) {
         this.name = Validate.text(name, "name");
         this.budget = Validate.positive(budget,"budget");
         this.remainingBudget = budget;
@@ -24,6 +24,7 @@ public class Budget {
         this.endDate = Validate.notNull(endDate, "end date");
         Validate.dateRange(startDate,endDate);
         this.type = Validate.notNull(type, "type");
+        this.active = active;
         this.user = Validate.notNull(user,"user");
     }
 
@@ -40,22 +41,6 @@ public class Budget {
     @Column(name = "remaining_budget")
     private BigDecimal remainingBudget;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Column(name = "start_date")
     private LocalDate startDate;
 
@@ -68,6 +53,9 @@ public class Budget {
 
     @OneToMany(mappedBy = "budget", cascade = CascadeType.ALL)
     private List<Expense> expenses = new ArrayList<>();
+
+    @Column(name = "active")
+    private boolean active;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

@@ -2,7 +2,7 @@ package com.expenseTracker.expensetracker;
 
 import com.expenseTracker.expensetracker.dto.BudgetExpenseDto;
 import com.expenseTracker.expensetracker.model.*;
-import com.expenseTracker.expensetracker.repository.BudgetListRepository;
+import com.expenseTracker.expensetracker.repository.BudgetRepository;
 import com.expenseTracker.expensetracker.repository.ExpenseRepository;
 import com.expenseTracker.expensetracker.repository.RoleRepository;
 import com.expenseTracker.expensetracker.repository.UserRepository;
@@ -32,7 +32,7 @@ class ExpensetrackerApplicationTests {
 	private PasswordEncoder passwordEncoder;
 
 	@Autowired
-	private BudgetListRepository budgetListRepository;
+	private BudgetRepository budgetRepository;
 
 	@Autowired
 	private ExpenseRepository expensiveRepository;
@@ -84,7 +84,7 @@ class ExpensetrackerApplicationTests {
 
 	@Test
 	void addExpenseToList(){
-		Budget budget = budgetListRepository.findBudgetById(4L).orElseThrow();
+		Budget budget = budgetRepository.findBudgetById(4L).orElseThrow();
 		Expense expense = Expense.builder()
 				.name("Patike")
 				.amount(BigDecimal.valueOf(45))
@@ -92,13 +92,13 @@ class ExpensetrackerApplicationTests {
 				.category(Category.IMPORTANT)
 				.build();
 		budget.assignExpense(expense);
-		budgetListRepository.save(budget);
+		budgetRepository.save(budget);
 		logger.info("Expense added: {}", budget);
 	}
 
 	@Test
 	void selectExpenseFromList(){
-		Budget budget = budgetListRepository.findBudgetById(4L).orElseThrow();
+		Budget budget = budgetRepository.findBudgetById(4L).orElseThrow();
 		List<String> expensiveNames = budget.getExpenses().stream().map(Expense::getName).toList();
 		logger.info("Budget list: {}", new BudgetExpenseDto(budget.getName(),expensiveNames));
 	}

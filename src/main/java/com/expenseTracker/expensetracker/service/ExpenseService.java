@@ -8,7 +8,7 @@ import com.expenseTracker.expensetracker.model.Budget;
 import com.expenseTracker.expensetracker.model.Category;
 import com.expenseTracker.expensetracker.model.Expense;
 import com.expenseTracker.expensetracker.model.User;
-import com.expenseTracker.expensetracker.repository.BudgetListRepository;
+import com.expenseTracker.expensetracker.repository.BudgetRepository;
 import com.expenseTracker.expensetracker.repository.ExpenseRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,21 +18,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ExpenseService {
 
-    private final BudgetListRepository budgetListRepository;
+    private final BudgetRepository budgetRepository;
     private final ExpenseRepository expenseRepository;
     private static final Logger logger = LoggerFactory.getLogger(ExpenseService.class);
 
     public ExpenseDetailsResponse getExpenseById(User user, Long budgetId, Long expenseId){
-        Budget budget = budgetListRepository.findByIdAndUserId(budgetId,user.getId())
+        Budget budget = budgetRepository.findByIdAndUserId(budgetId,user.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
 
         return expenseRepository.findByIdAndBudgetId(expenseId,budget.getId())
@@ -48,19 +46,19 @@ public class ExpenseService {
 
     @Transactional
     public Budget addExpenseToBudgetList(CreateExpenseDto createExpense, User user){
-        Budget budget = budgetListRepository.findByIdAndUserId(createExpense.getBudgetId(), user.getId()).orElseThrow(
+        Budget budget = budgetRepository.findByIdAndUserId(createExpense.getBudgetId(), user.getId()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with id: " + createExpense.getBudgetId())
         );
         Expense expense = Expense.createExpense(createExpense.getTitle(),createExpense.getAmount(),createExpense.getCategory());
         budget.assignExpense(expense);
-        budgetListRepository.save(budget);
+        budgetRepository.save(budget);
         return budget;
     }
 
     @Transactional
     public void deleteExpense(long expenseId, User user){
         Expense expense = expenseRepository.findById(expenseId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
-        Budget budget = budgetListRepository.findByIdAndUserId(expense.getBudget().getId(),user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
+        Budget budget = budgetRepository.findByIdAndUserId(expense.getBudget().getId(),user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
         budget.updateBudgetAfterExpenseDelete(expense);
         expenseRepository.delete(expense);
     }
@@ -70,7 +68,7 @@ public class ExpenseService {
         if (expenseFields.getName() == null && expenseFields.getCategory() == null && expenseFields.getAmount() == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No fields to update");
         }
-        Budget budget = budgetListRepository.findByIdAndUserId(expenseFields.getBudgetId(),user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with providede userId"));
+        Budget budget = budgetRepository.findByIdAndUserId(expenseFields.getBudgetId(),user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with providede userId"));
         Expense expense = expenseRepository.findByIdAndBudgetId(expenseFields.getExpenseId(), budget.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found with id: " + expenseFields.getExpenseId()));
             if (expenseFields.getName() != null){
                 expense.editName(expenseFields.getName());
