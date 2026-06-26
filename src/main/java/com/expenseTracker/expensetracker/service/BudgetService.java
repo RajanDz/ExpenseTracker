@@ -64,6 +64,19 @@ public class BudgetService {
         return budgetRepository.findByIdAndUserId(id,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with id:"+ id));
     }
 
+    public Page<BudgetResponseDto> getNonActiveBudgets(User user, Pageable pageable){
+        return budgetRepository.findByUserIdAndActiveFalse(user.getId(), pageable)
+                .map(budget -> new BudgetResponseDto(
+                        budget.getId(),
+                        budget.getName(),
+                        budget.getBudget(),
+                        budget.getRemainingBudget(),
+                        budget.getStartDate(),
+                        budget.getEndDate(),
+                        budget.getType().toString()
+                ));
+    }
+
     @Transactional
     public Budget getDefaultBudget(User user){
         return budgetRepository.findByUserIdAndActiveTrue(user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"There is no active budget at the moment. Try creating one."));

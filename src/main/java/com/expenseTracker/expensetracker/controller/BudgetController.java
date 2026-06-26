@@ -51,6 +51,13 @@ public class BudgetController {
         return ResponseEntity.ok().body(new BudgetResponseDto(budget.getId(), budget.getName(), budget.getBudget(), budget.getRemainingBudget(), budget.getStartDate(), budget.getEndDate(),String.valueOf(budget.getType())));
     }
 
+    @GetMapping("/nonActiveBudgets")
+    public ResponseEntity<Page<BudgetResponseDto>> getNonActiveBudgets(Authentication authentication, @PageableDefault(size = 10) Pageable pageable){
+        User user = userService.getLoggedUser(authentication);
+        Page<BudgetResponseDto> budgets = budgetService.getNonActiveBudgets(user, pageable);
+        return ResponseEntity.ok().body(budgets);
+    }
+
     @GetMapping("/getPrimaryBudget")
     public ResponseEntity<BudgetResponseDto> getDefaultBudget(Authentication authentication){
         User user = userService.getLoggedUser(authentication);
