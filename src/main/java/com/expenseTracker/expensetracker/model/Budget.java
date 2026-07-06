@@ -14,6 +14,7 @@ import java.util.List;
 @Table(name = "budget_list")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Budget {
 
     public Budget(String name, BigDecimal budget, LocalDate startDate, LocalDate endDate, BudgetTypes type , boolean active, User user) {
@@ -88,7 +89,9 @@ public class Budget {
         expense.editAmount(newAmount);
 
     }
-
+    public void deactivate(){
+        this.active = false;
+    }
     public void updateBudgetAfterExpenseDelete(Expense expense){
         this.remainingBudget = this.remainingBudget.add(expense.getAmount());
     }
