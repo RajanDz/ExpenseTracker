@@ -1,11 +1,14 @@
 package com.expenseTracker.expensetracker;
 
 import com.expenseTracker.expensetracker.dto.BudgetExpenseDto;
+import com.expenseTracker.expensetracker.dto.BudgetResponseDto;
+import com.expenseTracker.expensetracker.dto.CreateBudgetDto;
 import com.expenseTracker.expensetracker.model.*;
 import com.expenseTracker.expensetracker.repository.BudgetRepository;
 import com.expenseTracker.expensetracker.repository.ExpenseRepository;
 import com.expenseTracker.expensetracker.repository.RoleRepository;
 import com.expenseTracker.expensetracker.repository.UserRepository;
+import com.expenseTracker.expensetracker.service.BudgetService;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -37,7 +41,8 @@ class ExpensetrackerApplicationTests {
 	@Autowired
 	private ExpenseRepository expensiveRepository;
 
-
+	@Autowired
+	private BudgetService budgetService;
 	@Test
 	void contextLoads() {
 	}
@@ -69,18 +74,20 @@ class ExpensetrackerApplicationTests {
 
 
 
-//
-//	@Test
-//	void createBudget(){
-//		BudgetList budgetList = BudgetList.builder()
-//				.name("Potpuna stednja")
-//				.startDate(LocalDate.now())
-//				.endDate(LocalDate.now()
-//				.plusDays(15))
-//				.build();
-//		budgetListRepository.save(budgetList);
-//		logger.info("Budget: {}", budgetList);
-//	}
+
+	@Test
+	void createBudget(){
+		User user = userRepository.findById(2L).orElseThrow(() -> new IllegalArgumentException("User not found"));
+		CreateBudgetDto budgetDto = new CreateBudgetDto(
+				"Test feature Active now",
+				BigDecimal.valueOf(200000),
+				LocalDate.now(),
+				LocalDate.now().plusDays(10),
+				BudgetTypes.FLEX
+		);
+		BudgetResponseDto budgetResponseDto1 = budgetService.createBudgetList(budgetDto,user);
+		logger.info("Budget: {}", budgetResponseDto1);
+	}
 
 	@Test
 	void addExpenseToList(){
@@ -95,6 +102,9 @@ class ExpensetrackerApplicationTests {
 		budgetRepository.save(budget);
 		logger.info("Expense added: {}", budget);
 	}
+
+
+
 
 	@Test
 	void selectExpenseFromList(){

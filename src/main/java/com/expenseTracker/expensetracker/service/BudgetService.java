@@ -43,7 +43,12 @@ public class BudgetService {
                 user
         );
 
-        userRepository.save(user);
+        budgetRepository.findByUserIdAndActiveTrue(user.getId())
+                        .ifPresent(activeBudget -> {
+                            activeBudget.deactivate();
+                            budgetRepository.save(activeBudget);
+                        });
+
         budgetRepository.save(budget);
         return new BudgetResponseDto(budget.getId(),budget.getName(),budget.getBudget(),budget.getRemainingBudget(),budget.getStartDate(),budget.getEndDate(),String.valueOf(budget.getType()));
     }
