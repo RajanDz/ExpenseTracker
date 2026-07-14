@@ -18,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -82,6 +83,18 @@ public class BudgetService {
                 ));
     }
 
+    @Transactional
+    public void activateBudget(User user, Long budgetId){
+        budgetRepository.findByUserIdAndActiveTrue(user.getId()).ifPresent(budget -> {
+            budget.deactivate();
+            budgetRepository.save(budget);
+        });
+
+        Budget budget = budgetRepository.findByIdAndUserId(budgetId, user.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
+        budget.activate();
+        budgetRepository.save(budget);
+    }
     @Transactional
     public Budget getDefaultBudget(User user){
         return budgetRepository.findByUserIdAndActiveTrue(user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"There is no active budget at the moment. Try creating one."));
