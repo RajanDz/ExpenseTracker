@@ -52,10 +52,17 @@ public class BudgetController {
     }
 
     @GetMapping("/nonActiveBudgets")
-    public ResponseEntity<Page<BudgetResponseDto>> getNonActiveBudgets(Authentication authentication, @PageableDefault(size = 10) Pageable pageable){
+    public ResponseEntity<Page<BudgetResponseDto>>getNonActiveBudgets(Authentication authentication, @PageableDefault(size = 10) Pageable pageable){
         User user = userService.getLoggedUser(authentication);
         Page<BudgetResponseDto> budgets = budgetService.getNonActiveBudgets(user, pageable);
         return ResponseEntity.ok().body(budgets);
+    }
+
+    @PatchMapping("/activateBudget/{budgetId}")
+    public ResponseEntity<Void> activateBudget(Authentication authentication, @PathVariable(name = "budgetId") Long budgetId){
+        User user = userService.getLoggedUser(authentication);
+        budgetService.activateBudget(user,budgetId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/getPrimaryBudget")
