@@ -3,6 +3,7 @@ package com.expenseTracker.expensetracker.service;
 
 import com.expenseTracker.expensetracker.dto.CreateExpenseDto;
 import com.expenseTracker.expensetracker.dto.ExpenseDetailsResponse;
+import com.expenseTracker.expensetracker.dto.ExpenseResponse;
 import com.expenseTracker.expensetracker.dto.UpdateExpenseFields;
 import com.expenseTracker.expensetracker.model.Budget;
 import com.expenseTracker.expensetracker.model.Category;
@@ -14,10 +15,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
+import jakarta.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -88,5 +92,25 @@ public class ExpenseService {
                 .map(category -> category.name())
                 .toList();
         return categories;
+    }
+    public List<ExpenseResponse> getExpenseListByFilters(Boolean price, String category,User user,Long budgetId , Pageable pageable){
+        Budget budget = budgetRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
+        Specification<Expense> expenseList = findExpenseByFilters(price,category,budget);
+        return expenseRepository.findAll(expenseList,pageable)
+                .map(expense -> new ExpenseResponse(expense.getId(),expense.getName(),expense.getAmount(),expense.getCategory())).toList();
+    }
+    public Specification<Expense> findExpenseByFilters(Boolean price, String category, Budget budget){
+        return((root, query, criteriaBuilder) -> {
+            List<Predicate> predicateList = new ArrayList<>();
+            predicateList.add(criteriaBuilder.equal(root.get("budget"),budget));
+            if (price != null && price) {
+                query.orderBy(criteriaBuilder.asc(root.get("amount")));
+            }
+            if (category != null && !category.isEmpty()){
+                predicateList.add(criteriaBuilder.equal(root.get("category"),Category.valueOf(category)));
+            }
+            return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));
+
+        });
     }
 }
