@@ -59,7 +59,7 @@ public class ExpenseController {
         return ResponseEntity.ok(categories);
     }
     @GetMapping("/searchByFilters")
-    public ResponseEntity<List<ExpenseResponse>> getResultByFilter(Authentication authentication,@RequestParam(required = false,name = "price") Boolean price,@RequestParam(required = true, name = "budgetId") Long budgetId ,@RequestParam(required = false,name = "category") String category, @PageableDefault(size = 10)Pageable pageable){
+    public ResponseEntity<List<ExpenseResponse>> getResultByFilter(Authentication authentication,@RequestParam(required = false,name = "price") String price,@RequestParam(required = true, name = "budgetId") Long budgetId ,@RequestParam(required = false,name = "category") String category, @PageableDefault(size = 10)Pageable pageable){
         User user = userService.getLoggedUser(authentication);
         List<ExpenseResponse> results = expenseService.getExpenseListByFilters(price,category,user,budgetId,pageable);
         return ResponseEntity.ok(results);

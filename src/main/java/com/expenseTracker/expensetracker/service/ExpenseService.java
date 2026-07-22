@@ -93,18 +93,20 @@ public class ExpenseService {
                 .toList();
         return categories;
     }
-    public List<ExpenseResponse> getExpenseListByFilters(Boolean price, String category,User user,Long budgetId , Pageable pageable){
+    public List<ExpenseResponse> getExpenseListByFilters(String price, String category,User user,Long budgetId , Pageable pageable){
         Budget budget = budgetRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
         Specification<Expense> expenseList = findExpenseByFilters(price,category,budget);
         return expenseRepository.findAll(expenseList,pageable)
                 .map(expense -> new ExpenseResponse(expense.getId(),expense.getName(),expense.getAmount(),expense.getCategory())).toList();
     }
-    public Specification<Expense> findExpenseByFilters(Boolean price, String category, Budget budget){
+    public Specification<Expense> findExpenseByFilters(String price, String category, Budget budget){
         return((root, query, criteriaBuilder) -> {
             List<Predicate> predicateList = new ArrayList<>();
             predicateList.add(criteriaBuilder.equal(root.get("budget"),budget));
-            if (price != null && price) {
+            if ("ASC".equals(price)) {
                 query.orderBy(criteriaBuilder.asc(root.get("amount")));
+            } else if ("DESC".equals(price)){
+                query.orderBy(criteriaBuilder.desc(root.get("amount")));
             }
             if (category != null && !category.isEmpty()){
                 predicateList.add(criteriaBuilder.equal(root.get("category"),Category.valueOf(category)));
