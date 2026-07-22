@@ -9,6 +9,8 @@ import com.expenseTracker.expensetracker.service.ExpenseService;
 import com.expenseTracker.expensetracker.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +57,11 @@ public class ExpenseController {
     public ResponseEntity<List<String>> getCategories(){
         List<String> categories = expenseService.getAllCategories();
         return ResponseEntity.ok(categories);
+    }
+    @GetMapping("/searchByFilters")
+    public ResponseEntity<List<ExpenseResponse>> getResultByFilter(Authentication authentication,@RequestParam(required = false,name = "price") Boolean price,@RequestParam(required = true, name = "budgetId") Long budgetId ,@RequestParam(required = false,name = "category") String category, @PageableDefault(size = 10)Pageable pageable){
+        User user = userService.getLoggedUser(authentication);
+        List<ExpenseResponse> results = expenseService.getExpenseListByFilters(price,category,user,budgetId,pageable);
+        return ResponseEntity.ok(results);
     }
 }
