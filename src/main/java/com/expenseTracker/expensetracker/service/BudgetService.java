@@ -61,7 +61,8 @@ public class BudgetService {
                 expense.getId(),
                 expense.getName(),
                 expense.getAmount(),
-                expense.getCategory()
+                expense.getCategory(),
+                expense.getDateTime()
         ));
     }
 
