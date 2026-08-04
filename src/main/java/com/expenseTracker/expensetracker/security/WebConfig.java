@@ -2,6 +2,7 @@ package com.expenseTracker.expensetracker.security;
 
 
 import com.expenseTracker.expensetracker.security.jwt.AuthTokenFilter;
+import com.expenseTracker.expensetracker.security.jwt.AuthenticationEntryPoint;
 import com.expenseTracker.expensetracker.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -41,6 +42,7 @@ public class WebConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(new AuthenticationEntryPoint()))
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/budget").authenticated()
                         .requestMatchers("/api/expense").authenticated()

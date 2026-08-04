@@ -34,6 +34,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(auth);
         } else {
             logger.warn("Auth failed");
+
         }
         filterChain.doFilter(request,response);
 

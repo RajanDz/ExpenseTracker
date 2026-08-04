@@ -1,10 +1,7 @@
 package com.expenseTracker.expensetracker.service;
 
 
-import com.expenseTracker.expensetracker.dto.CreateExpenseDto;
-import com.expenseTracker.expensetracker.dto.ExpenseDetailsResponse;
-import com.expenseTracker.expensetracker.dto.ExpenseResponse;
-import com.expenseTracker.expensetracker.dto.UpdateExpenseFields;
+import com.expenseTracker.expensetracker.dto.*;
 import com.expenseTracker.expensetracker.model.Budget;
 import com.expenseTracker.expensetracker.model.Category;
 import com.expenseTracker.expensetracker.model.Expense;
@@ -21,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import jakarta.persistence.criteria.Predicate;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -88,28 +87,33 @@ public class ExpenseService {
     }
 
     public List<String> getAllCategories(){
-        List<String> categories = Arrays.stream(Category.values())
-                .map(category -> category.name())
+        return Arrays.stream(Category.values())
+                .map(Category::name)
                 .toList();
-        return categories;
     }
-    public List<ExpenseResponse> getExpenseListByFilters(String price, String category,User user,Long budgetId , Pageable pageable){
-        Budget budget = budgetRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
-        Specification<Expense> expenseList = findExpenseByFilters(price,category,budget);
+    public List<ExpenseResponse> getExpenseListByFilters(User user, ExpenseSearchFilters expenseSearchFilters, Pageable pageable){
+        Budget budget = budgetRepository.findByIdAndUserId(expenseSearchFilters.budgetId(),user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
+        Specification<Expense> expenseList = findExpenseByFilters(expenseSearchFilters.amountSort(),expenseSearchFilters.category(),expenseSearchFilters.fromDate(),expenseSearchFilters.toDate(),budget);
         return expenseRepository.findAll(expenseList,pageable)
-                .map(expense -> new ExpenseResponse(expense.getId(),expense.getName(),expense.getAmount(),expense.getCategory())).toList();
+                .map(expense -> new ExpenseResponse(expense.getId(),expense.getName(),expense.getAmount(),expense.getCategory(),expense.getDateTime())).toList();
     }
-    public Specification<Expense> findExpenseByFilters(String price, String category, Budget budget){
+    public Specification<Expense> findExpenseByFilters(String price, String category, LocalDate fromDate, LocalDate toDate, Budget budget){
         return((root, query, criteriaBuilder) -> {
             List<Predicate> predicateList = new ArrayList<>();
             predicateList.add(criteriaBuilder.equal(root.get("budget"),budget));
+            if (fromDate != null){
+                predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get("dateTime"), fromDate.atStartOfDay()));
+            }
+            if (toDate != null){
+                predicateList.add(criteriaBuilder.lessThanOrEqualTo(root.get("dateTime"), toDate.atTime(23,59,59)));
+            }
+            if (category != null && !category.isEmpty()){
+                predicateList.add(criteriaBuilder.equal(root.get("category"),Category.valueOf(category)));
+            }
             if ("ASC".equals(price)) {
                 query.orderBy(criteriaBuilder.asc(root.get("amount")));
             } else if ("DESC".equals(price)){
                 query.orderBy(criteriaBuilder.desc(root.get("amount")));
-            }
-            if (category != null && !category.isEmpty()){
-                predicateList.add(criteriaBuilder.equal(root.get("category"),Category.valueOf(category)));
             }
             return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));
 
