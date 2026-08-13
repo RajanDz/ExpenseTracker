@@ -86,7 +86,8 @@ public class BudgetController {
 
 
     @GetMapping("/remainingDays/{budgetId}")
-    public Long remainingDaysOfBudget(@PathVariable(name = "budgetId") Long id){
-        return budgetService.remainingTimeOfBudget(id);
+    public Long remainingDaysOfBudget(Authentication authentication,@PathVariable(name = "budgetId") Long id){
+        User user = userService.getLoggedUser(authentication);
+        return budgetService.remainingTimeOfBudget(user,id);
     }
 }
