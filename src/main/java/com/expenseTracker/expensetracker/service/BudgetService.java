@@ -112,8 +112,8 @@ public class BudgetService {
         budgetRepository.delete(budget);
     }
 
-    public Long remainingTimeOfBudget(Long budgetId){
-        Budget budget = budgetRepository.findById(budgetId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
+    public Long remainingTimeOfBudget(User user,Long budgetId){
+        Budget budget = budgetRepository.findByIdAndUserId(budgetId, user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
         return ChronoUnit.DAYS.between(LocalDate.now(), budget.getEndDate());
     }
 
