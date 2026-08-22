@@ -2,10 +2,8 @@ package com.expenseTracker.expensetracker.service;
 
 
 import com.expenseTracker.expensetracker.dto.*;
-import com.expenseTracker.expensetracker.model.Budget;
-import com.expenseTracker.expensetracker.model.Category;
-import com.expenseTracker.expensetracker.model.Expense;
-import com.expenseTracker.expensetracker.model.User;
+import com.expenseTracker.expensetracker.exception.BudgetNotFoundException;
+import com.expenseTracker.expensetracker.model.*;
 import com.expenseTracker.expensetracker.repository.BudgetRepository;
 import com.expenseTracker.expensetracker.repository.ExpenseRepository;
 import jakarta.transaction.Transactional;
@@ -92,7 +90,7 @@ public class ExpenseService {
                 .toList();
     }
     public List<ExpenseResponse> getExpenseListByFilters(User user, ExpenseSearchFilters expenseSearchFilters, Pageable pageable){
-        Budget budget = budgetRepository.findByIdAndUserId(expenseSearchFilters.budgetId(),user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
+        Budget budget = budgetRepository.findByIdAndUserId(expenseSearchFilters.budgetId(),user.getId()).orElseThrow(() -> new BudgetNotFoundException(ExceptionMessages.BUDGET_NOT_FOUND.getMessage()));
         Specification<Expense> expenseList = findExpenseByFilters(expenseSearchFilters.amountSort(),expenseSearchFilters.category(),expenseSearchFilters.fromDate(),expenseSearchFilters.toDate(),budget);
         return expenseRepository.findAll(expenseList,pageable)
                 .map(expense -> new ExpenseResponse(expense.getId(),expense.getName(),expense.getAmount(),expense.getCategory(),expense.getDateTime())).toList();

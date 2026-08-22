@@ -5,6 +5,7 @@ import com.expenseTracker.expensetracker.dto.SignInRequest;
 import com.expenseTracker.expensetracker.dto.SignInResponse;
 import com.expenseTracker.expensetracker.dto.SignUpRequest;
 import com.expenseTracker.expensetracker.dto.SignupResponseDto;
+import com.expenseTracker.expensetracker.exception.InvalidCredentialsException;
 import com.expenseTracker.expensetracker.model.User;
 import com.expenseTracker.expensetracker.service.AuthService;
 import jakarta.validation.Valid;
@@ -21,7 +22,7 @@ public class AuthController {
 
 
     @PostMapping("/signin")
-    public ResponseEntity<SignInResponse> signInRequest(@RequestBody SignInRequest request){
+    public ResponseEntity<SignInResponse> signInRequest(@RequestBody SignInRequest request) throws InvalidCredentialsException {
             String jwt = authService.signin(request);
             return ResponseEntity.ok(new SignInResponse(jwt));
     }

@@ -1,7 +1,9 @@
 package com.expenseTracker.expensetracker.service;
 
 import com.expenseTracker.expensetracker.dto.*;
+import com.expenseTracker.expensetracker.exception.BudgetNotFoundException;
 import com.expenseTracker.expensetracker.model.Budget;
+import com.expenseTracker.expensetracker.model.ExceptionMessages;
 import com.expenseTracker.expensetracker.model.User;
 import com.expenseTracker.expensetracker.repository.BudgetRepository;
 import com.expenseTracker.expensetracker.repository.ExpenseRepository;
@@ -56,7 +58,7 @@ public class BudgetService {
 
     public Page<ExpenseResponse> budgetExpenses(long budgetId, User user, Pageable pageable){
         Budget budget = budgetRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
+                () -> new BudgetNotFoundException(ExceptionMessages.BUDGET_NOT_FOUND.getMessage()));
         return  expenseRepository.findByBudgetId(budget.getId(),pageable).map(expense -> new ExpenseResponse(
                 expense.getId(),
                 expense.getName(),
@@ -68,7 +70,7 @@ public class BudgetService {
 
     @Transactional
     public Budget getBudget(long id, User user){
-        return budgetRepository.findByIdAndUserId(id,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found with id:"+ id));
+        return budgetRepository.findByIdAndUserId(id,user.getId()).orElseThrow(() ->  new BudgetNotFoundException(ExceptionMessages.BUDGET_NOT_FOUND.getMessage()));
     }
 
     public Page<BudgetResponseDto> getNonActiveBudgets(User user, Pageable pageable){
@@ -92,7 +94,7 @@ public class BudgetService {
         });
 
         Budget budget = budgetRepository.findByIdAndUserId(budgetId, user.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
+                .orElseThrow(() -> new BudgetNotFoundException(ExceptionMessages.BUDGET_NOT_FOUND.getMessage()));
         budget.activate();
         budgetRepository.save(budget);
     }
@@ -102,18 +104,18 @@ public class BudgetService {
     }
     @Transactional
     public BudgetDetailsResponse budgetExpenses(User user, Long id){
-        Budget budget = budgetRepository.findByIdAndUserId(id,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
+        Budget budget = budgetRepository.findByIdAndUserId(id,user.getId()).orElseThrow(() ->  new BudgetNotFoundException(ExceptionMessages.BUDGET_NOT_FOUND.getMessage()));
         return new BudgetDetailsResponse(budget.getExpenses().stream().map(expense -> new ReturnExpenseDto(expense.getName(),expense.getCategory())).collect(Collectors.toList()));
 
     }
     @Transactional
     public void deleteBudget(Long budgetId, User user){
-        Budget budget = budgetRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Budget not found"));
+        Budget budget = budgetRepository.findByIdAndUserId(budgetId,user.getId()).orElseThrow(() ->  new BudgetNotFoundException(ExceptionMessages.BUDGET_NOT_FOUND.getMessage()));
         budgetRepository.delete(budget);
     }
 
     public Long remainingTimeOfBudget(User user,Long budgetId){
-        Budget budget = budgetRepository.findByIdAndUserId(budgetId, user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
+        Budget budget = budgetRepository.findByIdAndUserId(budgetId, user.getId()).orElseThrow(() ->  new BudgetNotFoundException(ExceptionMessages.BUDGET_NOT_FOUND.getMessage()));
         return ChronoUnit.DAYS.between(LocalDate.now(), budget.getEndDate());
     }
 

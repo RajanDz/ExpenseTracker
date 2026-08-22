@@ -3,8 +3,7 @@ package com.expenseTracker.expensetracker.service;
 
 import com.expenseTracker.expensetracker.dto.SignInRequest;
 import com.expenseTracker.expensetracker.dto.SignUpRequest;
-import com.expenseTracker.expensetracker.dto.SignupResponseDto;
-import com.expenseTracker.expensetracker.model.CustomUserDetails;
+import com.expenseTracker.expensetracker.exception.InvalidCredentialsException;
 import com.expenseTracker.expensetracker.model.User;
 import com.expenseTracker.expensetracker.repository.UserRepository;
 import com.expenseTracker.expensetracker.security.jwt.JwtUtils;
@@ -13,14 +12,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.lang.module.ResolutionException;
 import java.util.Optional;
 
 @Service
@@ -32,13 +30,17 @@ public class AuthService {
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
 
-    public String signin(SignInRequest request){
+    public String signin(SignInRequest request) throws InvalidCredentialsException {
         Authentication authentication;
-        try {
+        try{
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),request.getPassword()));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+
+        } catch (AuthenticationException ex){
+            throw new InvalidCredentialsException("Invalid username or password");
         }
+
+
+
         UserDetails user = (UserDetails) authentication.getPrincipal();
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return jwtUtils.generateToken(user);
