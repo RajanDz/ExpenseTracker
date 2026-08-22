@@ -4,6 +4,7 @@ package com.expenseTracker.expensetracker.model;
 import com.expenseTracker.expensetracker.common.Validate;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.type.descriptor.jdbc.TimestampUtcAsOffsetDateTimeJdbcType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
