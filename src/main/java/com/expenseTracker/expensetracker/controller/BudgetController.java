@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -34,7 +35,7 @@ public class BudgetController {
     @GetMapping("/budgetExpense/{budgetId}")
     public ResponseEntity<PagedExpenseResponse> getBudgetExpenses(@PathVariable(name = "budgetId") long budgetId
             , Authentication authentication
-            , @PageableDefault(size = 10) Pageable pageable){
+            , @PageableDefault(size = 10,sort = "dateTime", direction = Sort.Direction.DESC) Pageable pageable){
         User user = userService.getLoggedUser(authentication);
         Page<ExpenseResponse> expensesList = budgetService.budgetExpenses(budgetId,user,pageable);
         return ResponseEntity.ok(new PagedExpenseResponse(
@@ -71,12 +72,7 @@ public class BudgetController {
         Budget budget = budgetService.getDefaultBudget(user);
         return ResponseEntity.ok().body(new BudgetResponseDto(budget.getId(), budget.getName(), budget.getBudget(), budget.getRemainingBudget(), budget.getStartDate(), budget.getEndDate(),String.valueOf(budget.getType())));
     }
-    @GetMapping("/getBudgetExpenses/{id}")
-    public ResponseEntity<BudgetDetailsResponse> getBudgetExpenses(@PathVariable(name = "id") Long id, Authentication authentication){
-        User user = userService.getLoggedUser(authentication);
-        BudgetDetailsResponse budgetResponseDto = budgetService.budgetExpenses(user,id);
-        return ResponseEntity.ok(budgetResponseDto);
-    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBudget(@PathVariable(name = "id") Long id, Authentication authentication){
         User user = userService.getLoggedUser(authentication);
