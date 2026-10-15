@@ -35,6 +35,8 @@ import java.util.List;
 public class WebConfig {
     @Value("${app.frontEndUrl}")
     private String url;
+    @Value("${app.localUrl}")
+    private String localUrl;
     private final CustomUserDetailsService customUserDetailsService;
     private final AuthTokenFilter authTokenFilter;
 
@@ -58,7 +60,7 @@ public class WebConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of(url));
+        corsConfiguration.setAllowedOrigins(List.of(url,localUrl));
         corsConfiguration.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE"));
         corsConfiguration.setAllowedHeaders(List.of("Authorization","Content-type"));
         corsConfiguration.setAllowCredentials(true);
