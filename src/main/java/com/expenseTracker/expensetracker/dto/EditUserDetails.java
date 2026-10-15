@@ -10,13 +10,10 @@ import org.springframework.stereotype.Component;
 @Getter
 @Component
 public class EditUserDetails {
-
+    @Size(min = 3, max = 10)
+    private String name;
+    @Size(min = 3)
+    private String lastname;
     @Size(min = 5)
     private String username;
-
-    @Email
-    private String email;
-
-    @Size(min = 5)
-    private String password;
 }

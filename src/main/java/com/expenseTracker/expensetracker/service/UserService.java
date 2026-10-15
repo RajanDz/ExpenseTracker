@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.regex.Pattern;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -27,29 +29,25 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-
     public User getLoggedUser(@NonNull Authentication authentication){
         CustomUserDetails authUser = (CustomUserDetails) authentication.getPrincipal();
         return userRepository.findByUsername(authUser.getUsername()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
     public void editUserDetail(User user, EditUserDetails userDetails){
-        if (userDetails.getUsername() != null){
-            if (userRepository.findByUsername(userDetails.getUsername()).isPresent()){
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exist");
+            if (userDetails.getName() != null && !userDetails.getName().isBlank()){
+                    user.editName(userDetails.getName());
             }
-            user.editUsername(userDetails.getUsername());
-        }
-        if (userDetails.getEmail() != null){
-            if (userRepository.findByEmail(userDetails.getEmail()).isPresent()){
-                throw new ResponseStatusException(HttpStatus.CONFLICT,"Email already in use.");
+            if (userDetails.getLastname() != null && !userDetails.getLastname().isBlank()){
+                user.editLastname(userDetails.getLastname());
             }
-            user.editEmail(userDetails.getEmail());
-        }
-        if (userDetails.getPassword() != null){
-            user.validatePassword(userDetails.getPassword());
-            user.editPassword(passwordEncoder.encode(userDetails.getPassword()));
-        }
+            if (userDetails.getUsername() != null && !userDetails.getUsername().isBlank()){
+                if (userRepository.findByUsername(userDetails.getUsername()).isPresent()){
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exist");
+                }
+                user.editUsername(userDetails.getUsername());
+            }
+
         userRepository.save(user);
     }
 
