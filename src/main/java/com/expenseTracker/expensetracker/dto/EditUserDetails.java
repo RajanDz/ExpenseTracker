@@ -8,7 +8,6 @@ import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 @Getter
-@Component
 public class EditUserDetails {
     @Size(min = 3, max = 10)
     private String name;
