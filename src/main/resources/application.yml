@@ -21,3 +21,4 @@ app:
   jwtExpirationMs: ${JWT_EXPIRATION_MS}
   authCookieName: jwtToken
   frontEndUrl: ${FRONT_URL}
+  localUrl: ${LOCAL_URL}
