@@ -5,6 +5,7 @@ import com.expenseTracker.expensetracker.security.jwt.AuthTokenFilter;
 import com.expenseTracker.expensetracker.security.jwt.AuthenticationEntryPoint;
 import com.expenseTracker.expensetracker.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,7 +33,8 @@ import java.util.List;
 @EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class WebConfig {
-
+    @Value("${app.frontEndUrl}")
+    private String url;
     private final CustomUserDetailsService customUserDetailsService;
     private final AuthTokenFilter authTokenFilter;
 
@@ -56,7 +58,7 @@ public class WebConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+        corsConfiguration.setAllowedOrigins(List.of(url));
         corsConfiguration.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE"));
         corsConfiguration.setAllowedHeaders(List.of("Authorization","Content-type"));
         corsConfiguration.setAllowCredentials(true);
