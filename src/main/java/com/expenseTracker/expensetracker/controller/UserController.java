@@ -22,7 +22,7 @@ public class UserController {
         return authentication.getName();
     }
 
-    @PatchMapping
+    @PatchMapping("/editUserDetails")
     public ResponseEntity<Void> editUserDetails(@Valid @RequestBody EditUserDetails userDetails, Authentication authentication){
         User user = userService.getLoggedUser(authentication);
         userService.editUserDetail(user,userDetails);

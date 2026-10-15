@@ -54,6 +54,24 @@ public class User {
         this.budgets.add(budget);
     }
 
+    public void editName(String name){
+        if (name == null || name.isBlank()){
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+        if (name.matches(".*[^a-zA-ZčćžšđČĆŽŠĐ\\s-].*")){
+            throw new IllegalArgumentException("Name must not contain special characters or number.");
+        }
+        this.name = name;
+    }
+    public void editLastname(String lastname){
+        if (lastname == null || lastname.isBlank()){
+            throw new IllegalArgumentException("Lastname cannot be empty");
+        }
+        if (lastname.matches(".*[^a-zA-ZčćžšđČĆŽŠĐ\\s-].*")){
+            throw new IllegalArgumentException("Lastname must not contain special characters or number.");
+        }
+        this.lastname = lastname;
+    }
     public void editUsername(String username){
         if (!username.matches(".*[A-Z].*")){
             throw new IllegalArgumentException("Username must have at least one uppercase character");
